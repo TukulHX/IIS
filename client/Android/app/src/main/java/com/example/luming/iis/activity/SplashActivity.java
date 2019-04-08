@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.base.BaseActivity;
@@ -21,6 +20,7 @@ import com.example.luming.iis.utils.TipDialogUtils;
 import com.example.luming.iis.utils.WebService;
 import com.example.luming.iis.widgets.FullScreenVideoView;
 
+import static com.example.luming.iis.activity.RegisterActivity.USER_PASSWORD;
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FAIL;
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_SUCCESS;
 
@@ -47,7 +47,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     public static final String SP_NULL = "SP_NULL";
 
     //用于标记用户是否登录 TODO 登录的用户不退出无法重新进入登录界面
-    private static boolean isLogin = false;
+    private boolean isLogin = false;
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -57,7 +57,10 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
                     // TODO 2、无网络则直接加载本地数据即可
                     isLogin = true;
                     TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_SUCCESS, "登录成功", handler);
-                    DeviceActivity.ToDeviceActivity(SplashActivity.this);
+//                    DeviceActivity.ToDeviceActivity(SplashActivity.this);
+                    Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
+                    intent.putExtra("isLogin", isLogin);
+                    SplashActivity.this.startActivity(intent);
                     break;
 
                 case LOGIN_FAILED:
@@ -107,6 +110,13 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         bt_login = findViewById(R.id.bt_login);
         tv_register = findViewById(R.id.tv_register);
         tv_tourist = findViewById(R.id.tv_tourist);
+
+        Intent intent = getIntent();
+        String user_id = intent.getStringExtra(USER_ID);
+        String user_password = intent.getStringExtra(USER_PASSWORD);
+        et_name.setText(user_id);
+        et_password.setText(user_password);
+
         bt_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
         tv_tourist.setOnClickListener(this);
@@ -131,7 +141,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
 
             case R.id.tv_register:
                 //do register TODO 这里无法使用TextInputLayout，将在后续进行注册界面重制
-                Toast.makeText(this, "点击了注册", Toast.LENGTH_SHORT).show();
+                RegisterActivity.ToRegisterActivity(this);
 //                LoginDialog.newInstance("注册新用户").setOnLoginListener(new LoginDialog.OnLoginListener() {
 //                    @Override
 //                    public void getLoginInfo(String name, String password) {
