@@ -8,6 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@color/mainBlue">
+        <ImageView
+            android:id="@+id/bt_add"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:src="@drawable/add"/>
 
         <TextView
             android:id="@+id/tv_title"
@@ -20,15 +28,19 @@
             android:textColor="@color/qmui_config_color_white"
             android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:paddingTop="30dp"
+            android:text="LogOut"
+            android:textColor="@color/qmui_config_color_white"
+            android:textSize="12sp" />
+
     </FrameLayout>
-    <!--TODO 准备移至导航栏右侧-->
-    <Button
-        android:id="@+id/btnAdd"
-        style="@style/StyleButtonBlue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="添加设备" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -37,6 +49,7 @@
 
         <ListView
             android:id="@+id/lv_device"
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

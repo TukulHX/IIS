@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +42,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     public static final String SP_NULL = "SP_NULL";
     private DatabaseOperator dbOperator;
     private List<Device> deviceList = new ArrayList<Device>();
-    private Button btnAdd;
+    private ImageView bt_add;
     private TextView tv_title;
     private MyDeviceAdapter adapter;
     private SharedPreferences sp;
@@ -115,7 +115,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void initView() {
-        btnAdd = findViewById(R.id.btnAdd);
+        bt_add = findViewById(R.id.bt_add);
         tv_title = findViewById(R.id.tv_title);
         dbOperator = DatabaseOperator.getInstance(this);
         adapter = new MyDeviceAdapter(this, deviceList);
@@ -135,14 +135,14 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 //            sync();
 //        }
         // 获取登陆信息并同步--end
-        btnAdd.setOnClickListener(this);
+        bt_add.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             // TODO 准备重写结构
-            case R.id.btnAdd:
+            case R.id.bt_add:
                 AddDeviceDialog.newInstance(this).setOnAddDeviceListener(new AddDeviceDialog.OnAddDeviceListener() {
                     @Override
                     public void getDevice(String name, String ip, String port) {
