@@ -39,25 +39,22 @@ class MyServer(socketserver.BaseRequestHandler):
 				print('Json Decode error')
 				break
 			print(data,'receive')
-			if data['name'] == 'exit':
-				flag = False
-			else:
-				if sys.version_info.major is 3:
-					component = config[data['name']]
-				else: # for python2 convert item to dict
-					component = {}
-					for tupe in config.items(data['name']):
-						component[tupe[0]] = tupe[1]
-				if component['type'] == 'action':
-					os.system(component['cmd'])
-					respons = {'content':'success'}
+			if sys.version_info.major is 3:
+				component = config[data['name']]
+			else: # for python2 convert item to dict
+				component = {}
+				for tupe in config.items(data['name']):
+					component[tupe[0]] = tupe[1]
+			if component['type'] == 'action':
+				os.system(component['cmd'])
+				respons = {'content':'success'}
 
-				elif component['type'] == 'status':
-					respons = {'content':os.popen(component["cmd"]).read()}
+			elif component['type'] == 'status':
+				respons = {'content':os.popen(component["cmd"]).read()}
 				
-				elif component['type'] == 'setter':
-					os.system(component['cmd']+" " + data['value'])
-					respons = {'content':'success'}
+			elif component['type'] == 'setter':
+				os.system(component['cmd']+" " + data['value'])
+				respons = {'content':'success'}
 						
 			respons = json.dumps(respons)
 			conn.sendall(respons.encode())
