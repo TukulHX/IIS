@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <servlet>
+    <servlet-name>LogLet</servlet-name>
+    <servlet-class>com.servlet.LogLet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>RegLet</servlet-name>
+    <servlet-class>com.servlet.RegLet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>RecLet</servlet-name>
+    <servlet-class>com.servlet.RecLet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SyncLet</servlet-name>
+    <servlet-class>com.servlet.SyncLet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>PullLet</servlet-name>
+    <servlet-class>com.servlet.PullLet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogLet</servlet-name>
+    <url-pattern>/LogLet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RegLet</servlet-name>
+    <url-pattern>/RegLet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RecLet</servlet-name>
+    <url-pattern>/RecLet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SyncLet</servlet-name>
+    <url-pattern>/SyncLet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PullLet</servlet-name>
+    <url-pattern>/PullLet</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>

@@ -1,0 +1,51 @@
+<resources>
+
+    <!-- Base application theme.这里使用QMUI的全局主题，若需要修改对应位置的样式，则在这里覆盖想替换的样式即可 -->
+    <style name="AppTheme" parent="QMUI.Compat">
+        <!-- Customize your theme here. -->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!--按钮-->
+    <style name="StyleButton">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+    </style>
+    <!--白色底按钮-->
+    <style name="StyleButtonWhite" parent="StyleButton">
+        <item name="android:background">@drawable/selector_button_white_blue</item>
+        <item name="android:textColor">@drawable/selector_button_text_blue</item>
+    </style>
+
+    <!--蓝色底按钮-->
+    <style name="StyleButtonBlue" parent="StyleButton">
+        <item name="android:background">@drawable/selector_button_blue</item>
+        <item name="android:textColor">@drawable/selector_button_text_white_blue</item>
+    </style>
+
+    <!--蓝色底按下透明按钮-->
+    <style name="StyleButtonTransparent" parent="StyleButton">
+        <item name="android:background">@drawable/selector_button_transparent</item>
+        <item name="android:textColor">@drawable/selector_button_text_white_blue</item>
+    </style>
+
+    <!--红色底按钮-->
+    <style name="StyleButtonRed" parent="StyleButton">
+        <item name="android:background">@drawable/selector_button_red</item>
+        <item name="android:textColor">@drawable/selector_button_text_black_red</item>
+    </style>
+
+
+</resources>
