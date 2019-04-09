@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -20,6 +21,7 @@ import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.dialog.AddDeviceDialog;
 import com.example.luming.iis.utils.MySocket;
+import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.example.luming.iis.utils.TipDialogUtils;
 import com.example.luming.iis.utils.WebService;
 
@@ -29,13 +31,13 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.luming.iis.activity.SplashActivity.IS_LOGIN;
+import static com.example.luming.iis.activity.SplashActivity.LOGIN_INFO;
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FAIL;
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_SUCCESS;
 
 /**
- * TODO 1、 准备将此页面制作为Device专用页面，添加设备放置在导航栏右侧，内容采用列表形式，外带下拉刷新功能，准备重制
- * TODO 2、 添加退出登录功能
- *
+ * TODO 物理返回按键监听
  */
 public class DeviceActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = "DeviceActivity";
@@ -43,11 +45,16 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private DatabaseOperator dbOperator;
     private List<Device> deviceList = new ArrayList<Device>();
     private ImageView bt_add;
-    private TextView tv_title;
+    private TextView tv_title, tv_logout;
     private MyDeviceAdapter adapter;
     private SharedPreferences sp;
     private ListView lv_device;
     private String userId;
+
+    /**
+     * 登录信息
+     */
+    private String loginInfo;
 
     public static final int CONNECTION_FAILED = 0;
     public static final int CONNECTION_SUCCESS = 1;
@@ -117,10 +124,25 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     protected void initView() {
         bt_add = findViewById(R.id.bt_add);
         tv_title = findViewById(R.id.tv_title);
+        tv_logout = findViewById(R.id.tv_logout);
         dbOperator = DatabaseOperator.getInstance(this);
         adapter = new MyDeviceAdapter(this, deviceList);
         lv_device = findViewById(R.id.lv_device);
         lv_device.setAdapter(adapter);
+        //先设置Logout为Login
+        tv_logout.setText("Login");
+        //设置logout是否可见
+        Boolean isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
+        if (isLogin) {
+            //设置可见
+            tv_logout.setText("Logout");
+            //获取登录信息
+            loginInfo = SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "");
+            System.out.println("登录信息Device页面:" + loginInfo);
+
+        }
+        tv_logout.setOnClickListener(this);
+        bt_add.setOnClickListener(this);
     }
 
     @Override
@@ -135,7 +157,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 //            sync();
 //        }
         // 获取登陆信息并同步--end
-        bt_add.setOnClickListener(this);
     }
 
     @Override
@@ -156,36 +177,27 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 }).showDialog(this);
                 break;
 
-//            case R.id.btnLog:
-//                if (sp.getString(USER_ID, SP_NULL).equals(SP_NULL)) {
-//                    LoginDialog.newInstance("登录我的数据中心").setOnLoginListener(new LoginDialog.OnLoginListener() {
-//                        @Override
-//                        public void getLoginInfo(String name, String password) {
-//                            //do login TODO后续添加跳转逻辑
-//                            login(name, password);
-//                        }
-//                    }).showDialog(this);
-//                } else {
-//                    SharedPreferences.Editor editor = sp.edit();
-//                    editor.putString(USER_ID, SP_NULL);
-//                    editor.commit();
-//                    btnLog.setText("点击登陆");
-//                    Message msg = new Message();
-//                    msg.what = 3;
-//                    msg.obj = "注销成功";
-//                    handler.sendMessage(msg);
-//                }
-//                break;
-//            case R.id.btnReg:
-//                LoginDialog.newInstance("注册新用户").setOnLoginListener(new LoginDialog.OnLoginListener() {
-//                    @Override
-//                    public void getLoginInfo(String name, String password) {
-//                        //do Register TODO 后续添加跳转逻辑
-//                        register(name, password);
-//                    }
-//                }).showDialog(this);
-//                break;
+            case R.id.tv_logout:
+                if (tv_logout.getText().equals("Login")) {
+                    //do login
+                    SplashActivity.ToSplashActivity(DeviceActivity.this);
+                } else {
+                    //do logout
+                    tv_logout.setText("Login");
+                    SharedPreferenceUtils.clear(getApplicationContext());
+                    SplashActivity.ToSplashActivity(DeviceActivity.this);
+                }
+                break;
+
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        System.out.println("执行了onRestart");
+        loginInfo = SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "");
+        System.out.println("onRestart:" + loginInfo);
     }
 
     public void onResume() {
@@ -204,6 +216,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         dbOperator.closeDB();
+        System.out.println("执行了onDestory");
         super.onDestroy();
     }
 
@@ -261,4 +274,37 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         }.start();
     }
 
+
+    private long mExitTime;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            exit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void exit() {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            if (tv_logout.getText().equals("Login")) {
+                Toast.makeText(DeviceActivity.this, "再按一次返回登录界面", Toast.LENGTH_SHORT).show();
+
+            } else{
+                Toast.makeText(DeviceActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            }
+            mExitTime = System.currentTimeMillis();
+        } else {
+            if (tv_logout.getText().equals("Login")) {
+                finish();
+            } else {
+                //退出前清空数据
+                SharedPreferenceUtils.clear(getApplicationContext());
+                finish();
+                System.exit(0);
+            }
+
+        }
+    }
 }

@@ -1,30 +1,36 @@
 package com.example.luming.iis.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.luming.iis.R;
-import com.example.luming.iis.base.BaseActivity;
+import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.example.luming.iis.utils.TipDialogUtils;
 import com.example.luming.iis.utils.WebService;
 import com.example.luming.iis.widgets.FullScreenVideoView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static com.example.luming.iis.activity.RegisterActivity.USER_PASSWORD;
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FAIL;
-import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_SUCCESS;
 
-public class SplashActivity extends BaseActivity implements View.OnClickListener {
+public class SplashActivity extends FragmentActivity implements View.OnClickListener {
 
     public static final String TAG = "SplashActivity";
     private FullScreenVideoView videoView;
@@ -39,70 +45,77 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
 
     private static final int REGISTER_FAILED = 2;
     private static final int REGISTER_SUCCESS = 3;
+    private static final int NET_ERROR = 4;
 
 
     public static final String CONFIG = "config";
     public static final String USER_ID = "user_id";
     public static final String JSON = "json";
-    public static final String SP_NULL = "SP_NULL";
+    public static final String LOGIN_NULL = "NULL";
+    public static final String LOGIN_INFO = "LoginInfo";
+    public static final String IS_LOGIN = "isLogin";
 
-    //用于标记用户是否登录 TODO 登录的用户不退出无法重新进入登录界面
+
     private boolean isLogin = false;
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case LOGIN_SUCCESS:
+                    isLogin = true;
                     // TODO 1、登录成功后检测网络状态，有网络则从服务器获取设备信息并加载设备界面
                     // TODO 2、无网络则直接加载本地数据即可
-                    isLogin = true;
-                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_SUCCESS, "登录成功", handler);
-//                    DeviceActivity.ToDeviceActivity(SplashActivity.this);
+                    //保存登录信息
+                    String loginInfo = msg.obj.toString();
+                    System.out.println("登录信息:" + loginInfo);
+                    SharedPreferenceUtils.saveString(getApplicationContext(), LOGIN_INFO, loginInfo);
+                    SharedPreferenceUtils.saveBoolean(getApplicationContext(), IS_LOGIN, isLogin);
+//                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_SUCCESS, "登录成功", handler);
                     Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
-                    intent.putExtra("isLogin", isLogin);
-                    SplashActivity.this.startActivity(intent);
+                    intent.putExtra(LOGIN_INFO, loginInfo);
+                    intent.putExtra(IS_LOGIN, isLogin);
+                    startActivity(intent);
+                    finish();
                     break;
 
                 case LOGIN_FAILED:
                     isLogin = false;
-                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_FAIL, "登录失败", handler);
+                    SharedPreferenceUtils.saveBoolean(getApplicationContext(), IS_LOGIN, isLogin);
+                    Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     break;
 
-                case REGISTER_SUCCESS:
-                    isLogin = true;
-                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_SUCCESS, "注册成功", handler);
-                    DeviceActivity.ToDeviceActivity(SplashActivity.this);
+                case NET_ERROR:
+                    System.out.println("msg.obj：" + msg.obj.toString());
+                    Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     break;
                 case REGISTER_FAILED:
-                    isLogin = false;
                     TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_FAIL, "注册失败", handler);
                     break;
             }
         }
     };
 
-    @Override
-    protected Activity getActivity() {
-        return SplashActivity.this;
-    }
 
-    public static void ToSplashActivity(Context context){
+    public static void ToSplashActivity(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
         context.startActivity(intent);
     }
 
     @Override
-    protected int getLayoutID() {
-        return R.layout.activity_splash;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+        isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
+        System.out.println("登录标记：" + isLogin);
+        if (isLogin) {
+            DeviceActivity.ToDeviceActivity(this);
+        }
+        initView();
+        playBackgroundVideo();
     }
 
-    @Override
-    protected void setTitle() {
 
-    }
-
-    @Override
-    protected void initView() {
+    private void initView() {
         root = findViewById(R.id.splash_root);
         videoView = findViewById(R.id.videoview);
         et_name = findViewById(R.id.et_name);
@@ -122,21 +135,19 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         tv_tourist.setOnClickListener(this);
     }
 
-    @Override
-    protected void initEvent() {
-        playBackgroundVideo();
-
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_login:
-                //do login TODO 此处登录为了测试需要，暂时做成跳转功能。
-//                String name = et_name.getText().toString().trim();
-//                String password = et_password.getText().toString().trim();
-//                login(name, password);
-                DeviceActivity.ToDeviceActivity(SplashActivity.this);
+                //do login
+                String name = et_name.getText().toString().trim();
+                String password = et_password.getText().toString().trim();
+                if (name.equals("") && password.equals("")) {
+                    Toast.makeText(this, "登录信息不能为空！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                login(name, password);
                 break;
 
             case R.id.tv_register:
@@ -165,39 +176,47 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void run() {
                 Message message = new Message();
-                String info = WebService.executeHttpGet("LogLet", name, password);
-                if (info.equals(SP_NULL)) {
+                String info = WebService.httpLogin(name, password);
+                System.out.println("点击了登录:" + info);
+                if (info.equals("false")) {
+                    message.what = NET_ERROR;
+                    message.obj = "请检查网络";
+                    handler.sendMessage(message);
+                } else if (info.equals(LOGIN_NULL)) {
                     message.what = LOGIN_FAILED;
-                    message.obj = "登陆失败";
+                    message.obj = "登陆失败,请检查账号密码";
+                    handler.sendMessage(message);
                 } else {
                     message.what = LOGIN_SUCCESS;
+                    //TODO 这里的info为user表的id值，为自增字段，保存在DeviceActivity中
                     message.obj = info;
+                    handler.sendMessage(message);
                 }
-                handler.sendMessage(message);
+
             }
         }).start();
     }
 
-    /**
-     * 注册
-     */
-    private void register(final String name, final String password) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message message = new Message();
-                String info = WebService.executeHttpGet("RegLet", name, password);
-                if (info.equals(SP_NULL)) {
-                    message.what = REGISTER_FAILED;
-                    message.obj = "注册失败";
-                } else {
-                    message.what = REGISTER_SUCCESS;
-                    message.obj = "注册成功";
-                }
-                handler.sendMessage(message);
-            }
-        }).start();
-    }
+//    /**
+//     * 注册
+//     */
+//    private void register(final String name, final String password) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Message message = new Message();
+//                String info = WebService.executeHttpGet("RegLet", name, password);
+//                if (info.equals(SP_NULL)) {
+//                    message.what = REGISTER_FAILED;
+//                    message.obj = "注册失败";
+//                } else {
+//                    message.what = REGISTER_SUCCESS;
+//                    message.obj = "注册成功";
+//                }
+//                handler.sendMessage(message);
+//            }
+//        }).start();
+//    }
 
     /**
      * 播放背景视频
@@ -254,5 +273,33 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         playBackgroundVideo();
         startAnimation();
         super.onRestart();
+    }
+
+    private boolean isExit = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+        }
+        return false;
+    }
+
+    private void exit() {
+        if (isExit == false) {
+            isExit = true;
+            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+        } else {
+            //2000ms内按第二次则退出
+            finish();
+            System.exit(0);
+        }
     }
 }

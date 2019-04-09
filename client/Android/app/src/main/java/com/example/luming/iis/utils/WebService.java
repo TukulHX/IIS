@@ -72,6 +72,7 @@ public class WebService {
                 is = conn.getInputStream();
                 return parseInfo(is);
             }
+            //网络正常，服务器异常返回值
             return "false";
 
         } catch (Exception e) {
@@ -89,7 +90,8 @@ public class WebService {
                 }
             }
         }
-        return "SP_NULL";
+        //网络不正常，返回
+        return "false";
     }
 
     // 将输入流转化为 String 型

@@ -51,6 +51,7 @@
                 android:background="@null"
                 android:maxLines="1"
                 android:padding="5dp"
+                android:text="lm"
                 android:textSize="15sp" />
 
         </LinearLayout>
@@ -84,6 +85,7 @@
                 android:background="@null"
                 android:maxLines="1"
                 android:padding="5dp"
+                android:text="123"
                 android:textSize="15sp" />
 
         </LinearLayout>
