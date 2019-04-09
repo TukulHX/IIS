@@ -52,6 +52,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             SplashActivity.ToSplashActivity(RegisterActivity.this);
                         }
                     }, 2000);
+                    finish();
                     break;
 
                 case REGISTER_FAILED:

@@ -161,11 +161,13 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 if (tv_logout.getText().equals("Login")) {
                     //do login
                     SplashActivity.ToSplashActivity(DeviceActivity.this);
+                    finish();
                 } else {
                     //do logout
                     tv_logout.setText("Login");
                     SharedPreferenceUtils.clear(getApplicationContext());
                     SplashActivity.ToSplashActivity(DeviceActivity.this);
+                    finish();
                 }
                 break;
 
@@ -280,6 +282,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             } else {
                 //退出前清空数据
                 SharedPreferenceUtils.clear(getApplicationContext());
+                System.out.println("sp被清空" + SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, true));
                 finish();
                 System.exit(0);
             }

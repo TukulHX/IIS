@@ -58,6 +58,6 @@ public class SharedPreferenceUtils {
         SharedPreferences preferences = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
-        editor.apply();
+        editor.commit();
     }
 }
