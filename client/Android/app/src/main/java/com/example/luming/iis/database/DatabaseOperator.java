@@ -44,19 +44,20 @@ public class DatabaseOperator {
     }
 
     public void addDevice(Device device) {
-        String sql = String.format("insert into device(name,ip,port) values(%s,%s,%s)",
+        String sql = String.format("insert into device(name,ip,port) values('%s','%s',%s)",
                 new Object[]{device.getName(), device.getIp(), device.getPort()});
+        System.out.println("addDevice SQL: " + sql);
         db.execSQL(sql);
         addOperation(sql);
     }
 
     public void deleteDevice(Device device) {
-        String sql = String.format("delete from device where name = %s", new Object[]{device.getName()});
+        String sql = String.format("delete from device where name = '%s'", new Object[]{device.getName()});
         db.execSQL(sql);
         addOperation(sql);
     }
     public void updateDevice(Device oldDev, Device newDev){
-        String sql = String.format("update device set name = %s, ip = %s, port = %s where name = %s"
+        String sql = String.format("update device set name = '%s', ip = '%s', port = %s where name = %s"
                 ,newDev.getName(),newDev.getIp(),newDev.getPort(),oldDev.getName());
         db.execSQL(sql);
         addOperation(sql);
@@ -164,6 +165,6 @@ public class DatabaseOperator {
     }
 
     public void addOperation(String sql){
-        db.execSQL("insert into operation(sql) values(?)",sql);
+        db.execSQL("insert into operation(sql) values(?)",new Object[]{sql});
     }
 }
