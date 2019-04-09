@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import com.service.Service;
 
-public class RecLet extends HttpServlet {
+public class usrLogLet extends HttpServlet {
+
+	private static final long serialVersionUID = 369840050351775312L;
 
 	/**
 	 * The doGet method of the Server let.
@@ -30,22 +33,24 @@ public class RecLet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// 接收信息
+		String username = request.getParameter("username");
+		username = new String(username.getBytes("ISO-8859-1"), "UTF-8");
+		String password = request.getParameter("password");
+		String info;
+		System.out.println(username + "--" + password);
+
 		// 新建服务对象
 		Service serv = new Service();
+
+		// 验证处理
+		info = serv.login(username, password);
 				
-				// 接收注册信息
-		String userId = request.getParameter("id");
-		String ret;
-				
-		System.out.println("let  "+ userId);
-		ret = serv.getRecent(userId);
-		System.out.println(ret);
-				// 返回信息
+		// 返回信息
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-				
-		out.print(ret.toString());
+		out.print(info);
 		out.flush();
 		out.close();
 	}

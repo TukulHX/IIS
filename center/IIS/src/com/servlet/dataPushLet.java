@@ -12,7 +12,7 @@ import org.json.JSONArray;
 
 import com.service.Service;
 
-public class SyncLet extends HttpServlet {
+public class dataPushLet extends HttpServlet {
 	/**
 	 * The doGet method of the Server let.
 	 */

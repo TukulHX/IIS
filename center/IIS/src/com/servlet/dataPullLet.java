@@ -8,9 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+
 import com.service.Service;
 
-public class RegLet extends HttpServlet {
+public class dataPullLet extends HttpServlet {
 
 	/**
 	 * The doGet method of the Server let.
@@ -20,7 +22,6 @@ public class RegLet extends HttpServlet {
 			throws ServletException, IOException {
 
 		
-		
 	}
 
 	/**
@@ -29,25 +30,23 @@ public class RegLet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// 鏂板缓鏈嶅姟瀵硅薄
+		// 新建服务对象
 		Service serv = new Service();
 				
-		// 鎺ユ敹娉ㄥ唽淇℃伅
-		String username = request.getParameter("username");
-		username = new String(username.getBytes("ISO-8859-1"), "UTF-8");
-		String password = request.getParameter("password");
-		String confirm;
-		
-		// 楠岃瘉澶勭悊
-		Boolean reged = serv.register(username,password);
-		
-		// 杩斿洖淇℃伅
+		// 接收注册信息
+		String userId = request.getParameter("id");
+		String time = request.getParameter("time");
+		String ret;
+				
+		ret = serv.getRecentData(userId,time);
+		System.out.println("pull" + ret);
+		// 返回信息
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-		out.print(reged.toString());
+				
+		out.print(ret.toString());
 		out.flush();
 		out.close();
 	}
-
 }

@@ -12,7 +12,7 @@ import org.json.JSONArray;
 
 import com.service.Service;
 
-public class PullLet extends HttpServlet {
+public class dataRecLet extends HttpServlet {
 
 	/**
 	 * The doGet method of the Server let.
@@ -33,14 +33,14 @@ public class PullLet extends HttpServlet {
 		// 新建服务对象
 		Service serv = new Service();
 				
-		// 接收注册信息
+				// 接收注册信息
 		String userId = request.getParameter("id");
-		String time = request.getParameter("time");
 		String ret;
 				
-		ret = serv.getRecentData(userId,time);
-		System.out.println("pull" + ret);
-		// 返回信息
+		System.out.println("let  "+ userId);
+		ret = serv.getRecent(userId);
+		System.out.println(ret);
+				// 返回信息
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
@@ -49,4 +49,5 @@ public class PullLet extends HttpServlet {
 		out.flush();
 		out.close();
 	}
+
 }
