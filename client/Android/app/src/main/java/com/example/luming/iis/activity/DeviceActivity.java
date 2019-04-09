@@ -75,26 +75,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                     TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_SUCCESS, "连接成功", handler);
                     ManageActivity.ToManagActivity(DeviceActivity.this, (String) msg.obj);
                     break;
-//                case LOGIN_SUCCESS:
-//                    //TODO 此处还需要添加登录或者注册成功的跳转
-//                    SharedPreferences.Editor editor = sp.edit();
-//                    //把数据进行保存
-//                    userId = msg.obj.toString();
-//                    editor.putString(USER_ID, msg.obj.toString());
-//                    editor.commit();
-//                    btnLog.setText("用户 ID: " + msg.obj + "  点击注销");
-//                    sync();
-//                    break;
-                case 3:
-                    Toast.makeText(DeviceActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
-//                case CONNECTION_SUCCESS:
-//                    //TODO 连接成功的TipLog
-//
-//                    break;
-//                case CONNECTION_FAILED:
-//                    //TODO 连接失败的TipLog
-//
-//                    break;
             }
         }
     };
@@ -149,7 +129,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     protected void initEvent() {
 //        sp = getSharedPreferences(CONFIG, 0);
 //        // 获取登陆信息并同步--start
-//        userId = sp.getString(USER_ID, SP_NULL);
+//        userId = sp.getString(USER_NAME, SP_NULL);
 //        if (userId.equals(SP_NULL)) {
 //            btnLog.setText("点击登陆");
 //        } else {

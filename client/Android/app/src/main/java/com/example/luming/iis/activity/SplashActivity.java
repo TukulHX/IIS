@@ -20,15 +20,11 @@ import android.widget.Toast;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
-import com.example.luming.iis.utils.TipDialogUtils;
 import com.example.luming.iis.utils.WebService;
 import com.example.luming.iis.widgets.FullScreenVideoView;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.example.luming.iis.activity.RegisterActivity.USER_PASSWORD;
-import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FAIL;
 
 public class SplashActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -42,14 +38,10 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
 
     private static final int LOGIN_FAILED = 0;
     private static final int LOGIN_SUCCESS = 1;
-
-    private static final int REGISTER_FAILED = 2;
-    private static final int REGISTER_SUCCESS = 3;
     private static final int NET_ERROR = 4;
 
 
-    public static final String CONFIG = "config";
-    public static final String USER_ID = "user_id";
+    public static final String USER_NAME = "user_id";
     public static final String JSON = "json";
     public static final String LOGIN_NULL = "NULL";
     public static final String LOGIN_INFO = "LoginInfo";
@@ -63,8 +55,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
             switch (msg.what) {
                 case LOGIN_SUCCESS:
                     isLogin = true;
-                    // TODO 1、登录成功后检测网络状态，有网络则从服务器获取设备信息并加载设备界面
-                    // TODO 2、无网络则直接加载本地数据即可
                     //保存登录信息
                     String loginInfo = msg.obj.toString();
                     System.out.println("登录信息:" + loginInfo);
@@ -87,9 +77,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                 case NET_ERROR:
                     System.out.println("msg.obj：" + msg.obj.toString());
                     Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                    break;
-                case REGISTER_FAILED:
-                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_FAIL, "注册失败", handler);
                     break;
             }
         }
@@ -124,12 +111,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
         tv_register = findViewById(R.id.tv_register);
         tv_tourist = findViewById(R.id.tv_tourist);
 
-        Intent intent = getIntent();
-        String user_id = intent.getStringExtra(USER_ID);
-        String user_password = intent.getStringExtra(USER_PASSWORD);
-        et_name.setText(user_id);
-        et_password.setText(user_password);
-
         bt_login.setOnClickListener(this);
         tv_register.setOnClickListener(this);
         tv_tourist.setOnClickListener(this);
@@ -151,15 +132,7 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                 break;
 
             case R.id.tv_register:
-                //do register TODO 这里无法使用TextInputLayout，将在后续进行注册界面重制
                 RegisterActivity.ToRegisterActivity(this);
-//                LoginDialog.newInstance("注册新用户").setOnLoginListener(new LoginDialog.OnLoginListener() {
-//                    @Override
-//                    public void getLoginInfo(String name, String password) {
-//                        //do Register TODO 后续添加跳转逻辑
-//                        register(name, password);
-//                    }
-//                }).showDialog(this);
                 break;
             case R.id.tv_tourist:
                 //do tourist
@@ -188,7 +161,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     handler.sendMessage(message);
                 } else {
                     message.what = LOGIN_SUCCESS;
-                    //TODO 这里的info为user表的id值，为自增字段，保存在DeviceActivity中
                     message.obj = info;
                     handler.sendMessage(message);
                 }
@@ -197,26 +169,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
         }).start();
     }
 
-//    /**
-//     * 注册
-//     */
-//    private void register(final String name, final String password) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Message message = new Message();
-//                String info = WebService.executeHttpGet("RegLet", name, password);
-//                if (info.equals(SP_NULL)) {
-//                    message.what = REGISTER_FAILED;
-//                    message.obj = "注册失败";
-//                } else {
-//                    message.what = REGISTER_SUCCESS;
-//                    message.obj = "注册成功";
-//                }
-//                handler.sendMessage(message);
-//            }
-//        }).start();
-//    }
 
     /**
      * 播放背景视频
@@ -255,10 +207,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
         animation.setDuration(1000);
         root.setAnimation(animation);
         animation.startNow();
-//        ObjectAnimator animatorY = new ObjectAnimator().ofFloat(root, "translationY", 300f, startY);
-//        animatorY.setDuration(1500);
-//        animatorY.start();
-
     }
 
     @Override
