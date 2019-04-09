@@ -39,19 +39,13 @@ public class RegLet extends HttpServlet {
 		String confirm;
 		
 		// 验证处理
-		boolean reged = serv.register(username,password);
-		if (reged) {
-			System.out.print("Succss");
-			confirm="Success";		
-		}else {
-			System.out.print("Failed");
-			confirm="NULL";
-		}
+		Boolean reged = serv.register(username,password);
+		
 		// 返回信息
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-		out.print(confirm);
+		out.print(reged.toString());
 		out.flush();
 		out.close();
 	}

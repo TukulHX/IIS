@@ -22,6 +22,17 @@ public class WebService {
         return connect(path);
     }
 
+    public static String httpLogin( String username, String password) {
+        return executeHttpGet("LogLet",username,password);
+    }
+
+    /**
+     * 通过Request方式注册用户
+     */
+    public static String httpRegister(String username, String password){
+        return  executeHttpGet("RegLet",username,password);
+    }
+
     public static String getWebRecTime(String userId) {
         String path = "http://" + IP + "/IIS/RecLet?id=" + userId;
         return connect(path);
@@ -61,7 +72,7 @@ public class WebService {
                 is = conn.getInputStream();
                 return parseInfo(is);
             }
-            return "SP_NULL";
+            return "false";
 
         } catch (Exception e) {
             e.printStackTrace();
