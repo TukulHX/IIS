@@ -44,11 +44,22 @@ public class DatabaseOperator {
     }
 
     public void addDevice(Device device) {
-        db.execSQL("insert into device(name,ip,port) values(?,?,?)", new Object[]{device.getName(), device.getIp(), device.getPort()});
+        String sql = String.format("insert into device(name,ip,port) values(?,?,?)",
+                new Object[]{device.getName(), device.getIp(), device.getPort()});
+        db.execSQL(sql);
+        addOperation(sql);
     }
 
     public void deleteDevice(Device device) {
-        db.execSQL("delete from device where name = ?", new Object[]{device.getName()});
+        String sql = String.format("delete from device where name = ?", new Object[]{device.getName()});
+        db.execSQL(sql);
+        addOperation(sql);
+    }
+    public void updateDevice(Device oldDev, Device newDev){
+        String sql = String.format("update device set name = ?, ip = ?, port = ? where name = ?"
+                ,newDev.getName(),newDev.getIp(),newDev.getPort(),oldDev.getName());
+        db.execSQL(sql);
+        addOperation(sql);
     }
 
     public List<Device> queryAllDevice() {
@@ -152,4 +163,7 @@ public class DatabaseOperator {
         return array.toString();
     }
 
+    public void addOperation(String sql){
+        db.execSQL("insert into operation(sql) values(?)",sql);
+    }
 }

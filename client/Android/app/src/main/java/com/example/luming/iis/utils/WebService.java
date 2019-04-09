@@ -61,7 +61,7 @@ public class WebService {
                 is = conn.getInputStream();
                 return parseInfo(is);
             }
-            return "NULL";
+            return "SP_NULL";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class WebService {
                 }
             }
         }
-        return "NULL";
+        return "SP_NULL";
     }
 
     // 将输入流转化为 String 型
