@@ -14,13 +14,25 @@ create table data
 (
 	id int(11) NOT NULL AUTO_INCREMENT,
 	user_id int(11),
+	device_id int(11),
 	module_name varchar(20),
 	send varchar(20),
 	value varchar(20),
 	time timestamp,
 	PRIMARY KEY(id)
 );
-insert into user(username,password) value('Â¬Ã÷','123');
+
+create table device
+(
+	id int(11) NOT NULL,
+	user_id int(11),
+	name varchar(20),
+	ip varchar(20),
+	port varchar(20)
+
+)
+
+insert into user(username,password) value('lm','123');
 
 insert into user(username,password) value('yjj','456');
 
