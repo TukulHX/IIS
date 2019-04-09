@@ -4,7 +4,7 @@ use IIS;
 create table user
 (
 	id int(11) NOT NULL AUTO_INCREMENT,
-	username varchar(20),
+	username varchar(20) unique,
 	password varchar(20),
 	PRIMARY KEY(id)	
 )
@@ -30,7 +30,7 @@ create table device
 	ip varchar(20),
 	port varchar(20)
 
-)
+);
 
 insert into user(username,password) value('lm','123');
 
