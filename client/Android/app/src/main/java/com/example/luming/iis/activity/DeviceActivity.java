@@ -240,10 +240,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 String localTime = dbOperator.queryRecentTime();
                 String webTime = WebService.getWebRecTime(userId);
                 Log.e(TAG, "local time: " + localTime + " webTime: " + webTime);
-                if ((localTime.equals(SP_NULL) && webTime.equals(SP_NULL)) || localTime.contains(webTime))  //因为 sqlite 查询会多出小数点，因此使用 contains 判断时间相等
+                if ((localTime.equals(SP_NULL) && webTime.equals("NULL")) || localTime.contains(webTime))  //因为 sqlite 查询会多出小数点，因此使用 contains 判断时间相等
                     return;
-                if ((localTime.compareTo(webTime) > 0 || webTime.equals(SP_NULL)) && localTime.equals(SP_NULL)) //上传
-                {
+                if (localTime.compareTo(webTime) > 0 || webTime.equals("NULL")) { //本地有新数据或网络无数据
                     String json = dbOperator.queryRecentData(webTime);
                     Log.e(TAG, "upload");
                     WebService.upLoad(userId, json);
