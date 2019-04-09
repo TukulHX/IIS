@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="10"
-            android:inputType="textEmailAddress"
+            android:inputType="numberPassword"
             android:hint="请输入密码(3-10位字母数字符号组合)" />
 
     </android.support.design.widget.TextInputLayout>
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="10"
-            android:inputType="textEmailAddress"
+            android:inputType="numberPassword"
             android:hint="请确认密码" />
 
     </android.support.design.widget.TextInputLayout>
