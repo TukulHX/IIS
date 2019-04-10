@@ -132,4 +132,12 @@ public class Service {
 		}
 		return "[]";
 	}
+	
+	public Boolean execUpdate(String sql) {
+		DBManager db = DBManager.createInstance();
+		db.connectDB();
+		
+		int ret = db.executeUpdate(sql);
+		return ret == 1;
+	}
 }

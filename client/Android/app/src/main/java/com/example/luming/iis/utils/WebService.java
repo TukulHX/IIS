@@ -1,5 +1,7 @@
 package com.example.luming.iis.utils;
 
+import com.example.luming.iis.database.DatabaseOperator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +55,21 @@ public class WebService {
         String path = null;
         path = "http://" + IP + "/IIS/dataPullLet?id=" + id + "&time=" + time;
         return connect(path);
+    }
+
+
+    public static void httpDeviceSync(String user_id){
+        String sql = DatabaseOperator.getDeviceOperation(user_id);
+        String tmpPath = "http://" + IP + "IIS/deviceSyncLet?sql=";
+        while (sql != null){
+            String path = tmpPath + sql;
+            String ret = connect(path);
+            if(ret.equals("success")){
+                DatabaseOperator.popDeviceOperation(user_id);
+            }
+            else
+                break;
+        }
     }
 
     private static String connect(String path) {

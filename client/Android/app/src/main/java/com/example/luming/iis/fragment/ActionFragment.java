@@ -38,6 +38,9 @@ public class ActionFragment extends BaseFragment {
     private String send_cmd;
     private String rec_value;
     private DatabaseOperator databaseOperator;
+    private String user_id = "-1";
+
+
     private static final String JSON = "json";
     public static final String ACTION = "action";
     public static final String SETTER = "setter";
@@ -50,7 +53,7 @@ public class ActionFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            databaseOperator.addLog(moduleName, send_cmd, rec_value);
+            databaseOperator.addData(user_id,moduleName, send_cmd, rec_value);
         }
     };
 

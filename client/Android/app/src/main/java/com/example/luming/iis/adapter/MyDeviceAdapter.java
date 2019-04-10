@@ -29,10 +29,12 @@ public class MyDeviceAdapter extends BaseAdapter {
     private DeviceActivity context;
     private DatabaseOperator dbOperator;
     private List<Device> deviceList;
+    private String user_id;
 
-    public MyDeviceAdapter(DeviceActivity context, List<Device> deviceList) {
+    public MyDeviceAdapter(DeviceActivity context, List<Device> deviceList, String user_id) {
         this.context = context;
         this.deviceList = deviceList;
+        this.user_id = user_id;
         dbOperator = DatabaseOperator.getInstance(context);
     }
 
@@ -89,7 +91,7 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.bt_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbOperator.deleteDevice(device);
+                dbOperator.deleteDevice(user_id,device);
                 context.onResume();
             }
         });

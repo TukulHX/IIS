@@ -49,7 +49,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private MyDeviceAdapter adapter;
     private SharedPreferences sp;
     private ListView lv_device;
-    private String userId;
+    private String userId = "-1";
 
     /**
      * 登录信息
@@ -106,7 +106,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         tv_title = findViewById(R.id.tv_title);
         tv_logout = findViewById(R.id.tv_logout);
         dbOperator = DatabaseOperator.getInstance(this);
-        adapter = new MyDeviceAdapter(this, deviceList);
+        adapter = new MyDeviceAdapter(this, deviceList, userId);
         lv_device = findViewById(R.id.lv_device);
         lv_device.setAdapter(adapter);
         //先设置Logout为Login
@@ -234,23 +234,32 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     /**
      * 同步数据
      */
-    private void sync() {
+    private void dataSync( final String userId) {
         Log.d(TAG, "同步数据开始");
         new Thread() {
             @Override
             public void run() {
-                String localTime = dbOperator.queryRecentTime();
+                String localTime = dbOperator.queryRecentTime(userId);
                 String webTime = WebService.getWebRecTime(userId);
                 Log.e(TAG, "local time: " + localTime + " webTime: " + webTime);
                 if ((localTime.equals(SP_NULL) && webTime.equals("NULL")) || localTime.contains(webTime))  //因为 sqlite 查询会多出小数点，因此使用 contains 判断时间相等
                     return;
                 if (localTime.compareTo(webTime) > 0 || webTime.equals("NULL")) { //本地有新数据或网络无数据
-                    String json = dbOperator.queryRecentData(webTime);
+                    String json = dbOperator.queryRecentData(webTime,userId);
                     Log.e(TAG, "upload");
                     WebService.upLoad(userId, json);
                 } else {         //下拉
                     dbOperator.addFromJsonArray(WebService.pull(userId, localTime));
                 }
+            }
+        }.start();
+    }
+    private void deviceSync(final String user_id){
+        Log.d(TAG,"同步设备开始");
+        new Thread(){
+            @Override
+            public void run() {
+                WebService.httpDeviceSync(user_id);
             }
         }.start();
     }

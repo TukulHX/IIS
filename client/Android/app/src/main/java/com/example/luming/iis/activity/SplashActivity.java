@@ -121,7 +121,7 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_login:
-                //do login
+                //do login TODO  添加同步操作
                 String name = et_name.getText().toString().trim();
                 String password = et_password.getText().toString().trim();
                 if (name.equals("") && password.equals("")) {

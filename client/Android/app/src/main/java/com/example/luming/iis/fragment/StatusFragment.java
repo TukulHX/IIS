@@ -47,7 +47,7 @@ public class StatusFragment extends BaseFragment {
     private EditText et_dataNum;
     private EditText et_delayTime;
     private Integer delayTime = 1;
-
+    private String user_id = "-1";
     private static final String JSON = "json";
 
 
@@ -73,7 +73,7 @@ public class StatusFragment extends BaseFragment {
                         delayTime = 1;
                     else
                         delayTime = Integer.parseInt(tmpDealyTime);
-                    databaseOperator.addLog(module_name, send_cmd, rec_value);
+                    databaseOperator.addData(user_id,module_name, send_cmd, rec_value);
                     drawlineChart();
                     removeMessages(1);
                     if (!isDestroy)
