@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,15 +14,14 @@ import android.widget.Toast;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.base.BaseActivity;
+import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.TipDialogUtils;
 import com.example.luming.iis.utils.WebService;
 
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_INFO;
 
 
-/**
- * TODO 在TextInputLayout中解决输入注册信息的各种情况即可。 不符合情况，设置注册按钮不可点击
- */
+
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "RegisterActivity";
@@ -31,10 +29,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private EditText et_id, et_password1, et_password2;
     private ImageView bt_back;
     private Button bt_register;
-    private TextInputLayout tl_name, tl_password1, tl_password2;
+    private LoadingDialog loadingDialog;
 
-    public static final String USER_NAME = "user_id";
-    public static final String USER_PASSWORD = "user_password";
 
     private static final int REGISTER_FAILED = 2;
     private static final int REGISTER_SUCCESS = 3;
@@ -45,17 +41,19 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
             switch (msg.what) {
                 case REGISTER_SUCCESS:
+                    loadingDialog.dissMiss();
                     Toast.makeText(RegisterActivity.this, "注册成功,两秒后返回登录界面!", Toast.LENGTH_SHORT).show();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             SplashActivity.ToSplashActivity(RegisterActivity.this);
+                            finish();
                         }
                     }, 2000);
-                    finish();
                     break;
 
                 case REGISTER_FAILED:
+                    loadingDialog.dissMiss();
                     Toast.makeText(RegisterActivity.this, "注册失败!", Toast.LENGTH_SHORT).show();
                     break;
 
@@ -90,9 +88,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         et_id = findViewById(R.id.et_id);
         et_password1 = findViewById(R.id.et_password1);
         et_password2 = findViewById(R.id.et_password2);
-        tl_name = findViewById(R.id.tl_name);
-        tl_password1 = findViewById(R.id.tl_password1);
-        tl_password2 = findViewById(R.id.tl_password2);
         bt_back = findViewById(R.id.bt_back);
         bt_register = findViewById(R.id.bt_register);
         bt_back.setOnClickListener(this);
@@ -167,6 +162,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
      * 注册
      */
     private void register(final String name, final String password) {
+        loadingDialog = new LoadingDialog(this);
+        loadingDialog.isShow();
         new Thread(new Runnable() {
             @Override
             public void run() {

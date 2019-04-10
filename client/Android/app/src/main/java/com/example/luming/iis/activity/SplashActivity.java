@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.example.luming.iis.utils.WebService;
 import com.example.luming.iis.widgets.FullScreenVideoView;
@@ -26,6 +27,7 @@ import com.example.luming.iis.widgets.FullScreenVideoView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//TODO 准备添加loading UI用于登录显示状态
 public class SplashActivity extends FragmentActivity implements View.OnClickListener {
 
     public static final String TAG = "SplashActivity";
@@ -35,6 +37,7 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     private LinearLayout root;
     private Button bt_login;
     private TextView tv_register, tv_tourist;
+    private LoadingDialog loadingDialog;
 
     private static final int LOGIN_FAILED = 0;
     private static final int LOGIN_SUCCESS = 1;
@@ -55,12 +58,12 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
             switch (msg.what) {
                 case LOGIN_SUCCESS:
                     isLogin = true;
+                    loadingDialog.dissMiss();
                     //保存登录信息
                     String loginInfo = msg.obj.toString();
                     System.out.println("登录信息:" + loginInfo);
                     SharedPreferenceUtils.saveString(getApplicationContext(), LOGIN_INFO, loginInfo);
                     SharedPreferenceUtils.saveBoolean(getApplicationContext(), IS_LOGIN, isLogin);
-//                    TipDialogUtils.getInstance(SplashActivity.this, ICON_TYPE_SUCCESS, "登录成功", handler);
                     Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
                     intent.putExtra(LOGIN_INFO, loginInfo);
                     intent.putExtra(IS_LOGIN, isLogin);
@@ -69,12 +72,14 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     break;
 
                 case LOGIN_FAILED:
+                    loadingDialog.dissMiss();
                     isLogin = false;
                     SharedPreferenceUtils.saveBoolean(getApplicationContext(), IS_LOGIN, isLogin);
                     Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     break;
 
                 case NET_ERROR:
+                    loadingDialog.dissMiss();
                     System.out.println("msg.obj：" + msg.obj.toString());
                     Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     break;
@@ -128,6 +133,8 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     Toast.makeText(this, "登录信息不能为空！", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                loadingDialog = new LoadingDialog(this);
+                loadingDialog.isShow();
                 login(name, password);
                 break;
 

@@ -20,6 +20,7 @@ import com.example.luming.iis.base.BaseActivity;
 import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.dialog.AddDeviceDialog;
+import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.MySocket;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.example.luming.iis.utils.TipDialogUtils;
@@ -50,6 +51,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private SharedPreferences sp;
     private ListView lv_device;
     private String userId = "-1";
+    private LoadingDialog loadingDialog;
 
     /**
      * 登录信息
@@ -69,9 +71,11 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             super.handleMessage(msg);
             switch (msg.what) {
                 case CONNECTION_FAILED:
+                    loadingDialog.dissMiss();
                     TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_FAIL, "连接失败", handler);
                     break;
                 case CONNECTION_SUCCESS:
+                    loadingDialog.dissMiss();
                     TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_SUCCESS, "连接成功", handler);
                     ManageActivity.ToManagActivity(DeviceActivity.this, (String) msg.obj);
                     break;
@@ -142,7 +146,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            // TODO 准备重写结构
             case R.id.bt_add:
                 AddDeviceDialog.newInstance(this).setOnAddDeviceListener(new AddDeviceDialog.OnAddDeviceListener() {
                     @Override
@@ -203,6 +206,8 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void connection(final String host, final Integer port) {
+        loadingDialog = new LoadingDialog(this);
+        loadingDialog.isShow();
         new Thread() {
             @Override
             public void run() {

@@ -91,7 +91,7 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.bt_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbOperator.deleteDevice(user_id,device);
+                dbOperator.deleteDevice(user_id, device);
                 context.onResume();
             }
         });
