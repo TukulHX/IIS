@@ -147,7 +147,6 @@ public class ActionFragment extends BaseFragment {
                     JSONObject j = new JSONObject(json);
                     OutputStream out = MySocket.getOut();
                     out.write(j.toString().getBytes());
-                    out.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -168,7 +167,6 @@ public class ActionFragment extends BaseFragment {
                     JSONObject jsonObject = new JSONObject(new String(buffer));
                     message.obj = jsonObject;
                     handler.sendMessage(message);
-                    is.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
