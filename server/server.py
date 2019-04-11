@@ -37,7 +37,6 @@ class MyServer(socketserver.BaseRequestHandler):
 				data = json.loads(raw_data)
 			except ValueError:
 				print('Json Decode error')
-				break
 			print(data,'receive')
 			if sys.version_info.major is 3:
 				component = config[data['name']]
