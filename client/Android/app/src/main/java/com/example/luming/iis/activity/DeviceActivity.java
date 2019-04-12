@@ -110,6 +110,10 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         tv_title = findViewById(R.id.tv_title);
         tv_logout = findViewById(R.id.tv_logout);
         dbOperator = DatabaseOperator.getInstance(this);
+
+        // TODO 以后可以将userId 与 loginInfo 分开
+        userId =  SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "-1");
+
         adapter = new MyDeviceAdapter(this, deviceList, userId);
         lv_device = findViewById(R.id.lv_device);
         lv_device.setAdapter(adapter);
@@ -128,8 +132,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         tv_logout.setOnClickListener(this);
         bt_add.setOnClickListener(this);
 
-        // TODO 以后可以将userId 与 loginInfo 分开
-        userId =  SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "-1");
     }
 
     @Override
@@ -297,6 +299,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 finish();
             } else {
                 //退出前清空数据
+                dbOperator.clearLocalDevice(userId);
                 SharedPreferenceUtils.clear(getApplicationContext());
                 System.out.println("sp被清空" + SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, true));
                 finish();

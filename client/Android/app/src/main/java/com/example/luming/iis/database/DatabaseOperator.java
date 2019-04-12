@@ -66,6 +66,11 @@ public class DatabaseOperator {
         addDeviceOperation(user_id,sql);
     }
 
+    public void clearLocalDevice(String user_id){
+        String sql = String.format("delete from device where user_id = '%s'");
+        db.execSQL(sql);
+    }
+
     public void updateDevice(String user_id, Device oldDev, Device newDev){
         String sql = String.format("update device set name = '%s', ip = '%s', port = '%s' where name = '%s' and user_id = '%s'"
                 ,newDev.getName(),newDev.getIp(),newDev.getPort(),oldDev.getName(),user_id);
