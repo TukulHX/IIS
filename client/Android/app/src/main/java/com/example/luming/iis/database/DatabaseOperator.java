@@ -40,6 +40,7 @@ public class DatabaseOperator {
     public void closeDB() {
         if (db != null) {
             db.close();
+            databaseOperator = null;
         }
     }
 
@@ -67,7 +68,7 @@ public class DatabaseOperator {
     }
 
     public void clearLocalDevice(String user_id){
-        String sql = String.format("delete from device where user_id = '%s'");
+        String sql = String.format("delete from device where user_id = '%s'",user_id);
         db.execSQL(sql);
     }
 
@@ -162,7 +163,7 @@ public class DatabaseOperator {
     }
 
     public String queryRecentTime(String user_id) {
-        Cursor c = db.rawQuery("select time from data order by time desc limit 1 where user_id = " + user_id, null);
+        Cursor c = db.rawQuery("select time from data where user_id = " + user_id +" order by time desc limit 1 ", null);
         while (c.moveToNext()) {
             return c.getString(0);
         }
@@ -199,13 +200,18 @@ public class DatabaseOperator {
     }
 
     public static String getDeviceOperation(String user_id){
-        Cursor cr = db.rawQuery("select sql from operation  where user_id = "+ user_id+ "limit 1",null);
+        Cursor cr = db.rawQuery("select sql from operation  where user_id = "+ user_id+ " limit 1",null);
+        System.out.print("cr.getCount() = " + String.valueOf(cr.getCount()) );
         if (cr.getCount() != 0){
+            cr.moveToNext();
             return cr.getString(0);
         }
         return null;
     }
     public static void popDeviceOperation(String user_id){
-        db.rawQuery("delete from operation where 1 and user_id = "+ user_id + " order by id limit 1",null);
+        String sql = "delete from operation where  id  in " +
+                "( select id from operation where user_id = ? limit 1)";
+        System.out.print("delete sql : " + sql);
+        db.execSQL(sql,new Object[]{user_id});
     }
 }

@@ -2,6 +2,7 @@ package com.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +32,9 @@ public class deviceSyncLet extends HttpServlet {
 			throws ServletException, IOException {
 		Service serv = new Service();
 				
-		String sql = request.getParameter("sql");
+		String encodedSql = request.getParameter("sql");
+		byte[] base64decodedBytes = Base64.getDecoder().decode(encodedSql);
+		String sql = new String(base64decodedBytes);
 		Boolean ret = serv.execUpdate(sql);
 		
 		response.setCharacterEncoding("UTF-8");

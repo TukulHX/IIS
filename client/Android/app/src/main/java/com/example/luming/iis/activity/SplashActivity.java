@@ -96,14 +96,17 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
         isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
-        System.out.println("登录标记：" + isLogin);
         if (isLogin) {
+            finish();
             DeviceActivity.ToDeviceActivity(this);
         }
-        initView();
-        playBackgroundVideo();
+        else {
+            setContentView(R.layout.activity_splash);
+            System.out.println("登录标记：" + isLogin);
+            initView();
+            playBackgroundVideo();
+        }
     }
 
 
@@ -126,7 +129,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_login:
-                //do login TODO  添加同步操作
                 String name = et_name.getText().toString().trim();
                 String password = et_password.getText().toString().trim();
                 if (name.equals("") && password.equals("")) {
@@ -218,8 +220,10 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
 
     @Override
     protected void onStop() {
-        videoView.stopPlayback();
-        root.setVisibility(View.GONE);
+        if(!isLogin){
+            videoView.stopPlayback();
+            root.setVisibility(View.GONE);
+        }
         super.onStop();
     }
 

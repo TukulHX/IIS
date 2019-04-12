@@ -134,6 +134,7 @@ public class Service {
 	}
 	
 	public Boolean execUpdate(String sql) {
+		System.out.print("exect Sql " + sql);
 		DBManager db = DBManager.createInstance();
 		db.connectDB();
 		

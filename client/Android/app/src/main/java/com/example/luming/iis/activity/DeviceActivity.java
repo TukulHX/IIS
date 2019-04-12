@@ -127,7 +127,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             //获取登录信息
             loginInfo = SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "");
             System.out.println("登录信息Device页面:" + loginInfo);
-
+            //同步
+            dataSync();
+            deviceSync();
         }
         tv_logout.setOnClickListener(this);
         bt_add.setOnClickListener(this);
@@ -173,7 +175,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 } else {
                     //do logout
                     tv_logout.setText("Login");
+                    //退出前清空数据
                     SharedPreferenceUtils.clear(getApplicationContext());
+                    dbOperator.clearLocalDevice(userId);
                     SplashActivity.ToSplashActivity(DeviceActivity.this);
                     finish();
                 }
@@ -243,7 +247,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     /**
      * 同步数据
      */
-    private void dataSync( final String userId) {
+    private void dataSync() {
         Log.d(TAG, "同步数据开始");
         new Thread() {
             @Override
@@ -251,7 +255,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 String localTime = dbOperator.queryRecentTime(userId);
                 String webTime = WebService.getWebRecTime(userId);
                 Log.e(TAG, "local time: " + localTime + " webTime: " + webTime);
-                if ((localTime.equals(SP_NULL) && webTime.equals("NULL")) || localTime.contains(webTime))  //因为 sqlite 查询会多出小数点，因此使用 contains 判断时间相等
+                if ((localTime.equals(SP_NULL) && webTime.equals("false")) || localTime.contains(webTime))  //因为 sqlite 查询会多出小数点，因此使用 contains 判断时间相等
                     return;
                 if (localTime.compareTo(webTime) > 0 || webTime.equals("NULL")) { //本地有新数据或网络无数据
                     String json = dbOperator.queryRecentData(webTime,userId);
@@ -263,12 +267,12 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             }
         }.start();
     }
-    private void deviceSync(final String user_id){
+    private void deviceSync(){
         Log.d(TAG,"同步设备开始");
         new Thread(){
             @Override
             public void run() {
-                WebService.httpDeviceSync(user_id);
+                WebService.httpDeviceSync(userId);
             }
         }.start();
     }
@@ -298,14 +302,8 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             if (tv_logout.getText().equals("Login")) {
                 finish();
             } else {
-                //退出前清空数据
-                dbOperator.clearLocalDevice(userId);
-                SharedPreferenceUtils.clear(getApplicationContext());
-                System.out.println("sp被清空" + SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, true));
-                finish();
                 System.exit(0);
             }
-
         }
     }
 }

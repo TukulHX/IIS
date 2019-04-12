@@ -24,7 +24,6 @@ create table data
 
 create table device
 (
-	id int(11) NOT NULL,
 	user_id int(11),
 	name varchar(20),
 	ip varchar(20),

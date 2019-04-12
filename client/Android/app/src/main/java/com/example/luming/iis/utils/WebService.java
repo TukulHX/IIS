@@ -1,5 +1,7 @@
 package com.example.luming.iis.utils;
 
+import android.util.Base64;
+
 import com.example.luming.iis.database.DatabaseOperator;
 
 import java.io.ByteArrayOutputStream;
@@ -11,7 +13,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class WebService {
-    private static String IP = "luuming.imwork.net:33136"; //修改为你的服务器 IP 地址
+    private static String IP = "192.168.43.253:8080"; //修改为你的服务器 IP 地址
 
     /**
      * 通过Get方式获取HTTP服务器数据
@@ -60,12 +62,17 @@ public class WebService {
 
     public static void httpDeviceSync(String user_id){
         String sql = DatabaseOperator.getDeviceOperation(user_id);
-        String tmpPath = "http://" + IP + "IIS/deviceSyncLet?sql=";
+        System.out.print("get device opt +  "+ sql);
+        String tmpPath = "http://" + IP + "/IIS/deviceSyncLet?sql=";
         while (sql != null){
-            String path = tmpPath + sql;
+            String encodedSql = Base64.encodeToString(sql.getBytes(), Base64.DEFAULT);
+            String path = tmpPath + encodedSql;
+            System.out.print("Sync path = " + path);
             String ret = connect(path);
             if(ret.equals("success")){
                 DatabaseOperator.popDeviceOperation(user_id);
+                sql =  DatabaseOperator.getDeviceOperation(user_id);
+                System.out.print("get device opt +  "+ sql);
             }
             else
                 break;
