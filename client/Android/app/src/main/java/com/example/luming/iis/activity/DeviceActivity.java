@@ -50,7 +50,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private MyDeviceAdapter adapter;
     private SharedPreferences sp;
     private ListView lv_device;
-    private String userId = "-1";
+    private String userId;
     private LoadingDialog loadingDialog;
 
     /**
@@ -127,6 +127,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         }
         tv_logout.setOnClickListener(this);
         bt_add.setOnClickListener(this);
+
+        // TODO 以后可以将userId 与 loginInfo 分开
+        userId =  SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "-1");
     }
 
     @Override
@@ -154,7 +157,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                             Toast.makeText(DeviceActivity.this, "该设备已存在，请勿重复添加", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        dbOperator.addDevice(new Device(name, ip, Integer.valueOf(port), false));
+                        dbOperator.addDevice(new Device(name, ip,port), userId);
                         notifyChange();
                     }
                 }).showDialog(this);
@@ -173,7 +176,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                     finish();
                 }
                 break;
-
         }
     }
 
@@ -193,7 +195,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private void notifyChange() {
         if (adapter != null) {
             deviceList.clear();
-            deviceList.addAll(dbOperator.queryAllDevice());
+            deviceList.addAll(dbOperator.queryAllDevice(userId));
             adapter.notifyDataSetChanged();
         }
     }

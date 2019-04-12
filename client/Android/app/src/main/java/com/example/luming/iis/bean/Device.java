@@ -7,17 +7,17 @@ package com.example.luming.iis.bean;
 public class Device {
     private String name;
     private String ip;
-    private int port;
+    private String port;
     private boolean isVisible;
+    private String userId;
 
-    public Device(String name, String ip, int port, boolean isVisible) {
+    public Device(String name, String ip, String port, String userId) {
         this.name = name;
         this.ip = ip;
         this.port = port;
-        this.isVisible = isVisible;
     }
 
-    public Device(String name, String ip, int port) {
+    public Device(String name, String ip, String port) {
         this.name = name;
         this.ip = ip;
         this.port = port;
@@ -39,11 +39,11 @@ public class Device {
         this.ip = ip;
     }
 
-    public int getPort() {
+    public String getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(String port) {
         this.port = port;
     }
 

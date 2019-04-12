@@ -52,7 +52,7 @@ public class DatabaseOperator {
     }
 
     public void addDevice(Device device , String user_id) {
-        String sql = String.format("insert into device(user_id,name,ip,port) values( %d,'%s','%s',%s)",
+        String sql = String.format("insert into device(user_id,name,ip,port) values( '%s','%s','%s',%s)",
                 new Object[]{user_id,device.getName(), device.getIp(), device.getPort()});
         System.out.println("addDevice SQL: " + sql);
         db.execSQL(sql);
@@ -80,21 +80,21 @@ public class DatabaseOperator {
         }
         Cursor c = db.rawQuery("select name,ip,port from device where user_id = '-1'", null);
         while (c.moveToNext()) {
-            Device device = new Device(c.getString(0), c.getString(1), c.getInt(2));
+            Device device = new Device(c.getString(0), c.getString(1), c.getString(2));
             list.add(device);
         }
         c.close();
         return list;
     }
 
-    public List<Device> queryAllDevice(Integer user_id) {
+    public List<Device> queryAllDevice(String user_id) {
         ArrayList<Device> list = new ArrayList<Device>();
         if (!db.isOpen()){
             db = dbHelper.getWritableDatabase();
         }
-        Cursor c = db.rawQuery("select name,ip,port from device where user_id = " + user_id.toString(),null);
+        Cursor c = db.rawQuery("select name,ip,port from device where user_id = " + user_id,null);
         while (c.moveToNext()) {
-            Device device = new Device(c.getString(0), c.getString(1), c.getInt(2));
+            Device device = new Device(c.getString(0), c.getString(1), c.getString(2));
             list.add(device);
         }
         c.close();

@@ -15,6 +15,7 @@ import com.example.luming.iis.R;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
+import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -47,7 +48,7 @@ public class StatusFragment extends BaseFragment {
     private EditText et_dataNum;
     private EditText et_delayTime;
     private Integer delayTime = 1;
-    private String user_id = "-1";
+    private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
     private static final String JSON = "json";
 
 

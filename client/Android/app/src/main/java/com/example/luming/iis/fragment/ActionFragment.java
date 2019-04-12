@@ -14,6 +14,7 @@ import com.example.luming.iis.R;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
+import com.example.luming.iis.utils.SharedPreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class ActionFragment extends BaseFragment {
     private String send_cmd;
     private String rec_value;
     private DatabaseOperator databaseOperator;
-    private String user_id = "-1";
+    private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
 
 
     private static final String JSON = "json";

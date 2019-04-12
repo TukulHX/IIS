@@ -85,7 +85,7 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.bt_conn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.connection(device.getIp(), device.getPort());
+                context.connection(device.getIp(), Integer.getInteger( device.getPort() ));
             }
         });
         vh.bt_delete.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +136,6 @@ public class MyDeviceAdapter extends BaseAdapter {
         });
         return convertView;
     }
-
 
     static class ViewHolder {
         private TextView tv_deviceName;
