@@ -13,8 +13,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class WebService {
-    private static String IP = "192.168.43.253:8080"; //修改为你的服务器 IP 地址
-
+    //private static String IP = "192.168.43.253:8080"; //修改为你的服务器 IP 地址
+    private static String IP = "luuming.imwork.net:33136";
     /**
      * 通过Get方式获取HTTP服务器数据
      *
@@ -42,8 +42,7 @@ public class WebService {
         return connect(path);
     }
 
-    public static void upLoad(String id, String jsonArray) {
-
+    public static void httpDataPush(String id, String jsonArray) {
         String path = null;
         try {
             path = "http://" + IP + "/IIS/dataPushLet?id=" + id + "&data=" + URLEncoder.encode(jsonArray, "UTF-8");
@@ -53,16 +52,14 @@ public class WebService {
         connect(path);
     }
 
-    public static String pull(String id, String time) {
-        String path = null;
-        path = "http://" + IP + "/IIS/dataPullLet?id=" + id + "&time=" + time;
+    public static String httpDataPull(String id, String time) {
+        String path = path = "http://" + IP + "/IIS/dataPullLet?id=" + id + "&time=" + time;
         return connect(path);
     }
 
 
     public static void httpDeviceSync(String user_id){
         String sql = DatabaseOperator.getDeviceOperation(user_id);
-        System.out.print("get device opt +  "+ sql);
         String tmpPath = "http://" + IP + "/IIS/deviceSyncLet?sql=";
         while (sql != null){
             String encodedSql = Base64.encodeToString(sql.getBytes(), Base64.DEFAULT);
@@ -77,6 +74,10 @@ public class WebService {
             else
                 break;
         }
+    }
+    public static String httpDevicePull(String user_id){
+        String path = "http://" + IP + "/IIS/devicePullLet?id=" + user_id;
+        return connect(path);
     }
 
     private static String connect(String path) {

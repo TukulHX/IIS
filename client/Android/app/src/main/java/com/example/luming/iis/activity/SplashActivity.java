@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
 import com.example.luming.iis.utils.WebService;
@@ -38,11 +39,12 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     private Button bt_login;
     private TextView tv_register, tv_tourist;
     private LoadingDialog loadingDialog;
+    private String loginInfo;
 
     private static final int LOGIN_FAILED = 0;
     private static final int LOGIN_SUCCESS = 1;
-    private static final int NET_ERROR = 4;
-
+    private static final int NET_ERROR = 2;
+    private static final int SYNC_FINISHED = 3;
 
     public static final String USER_NAME = "user_id";
     public static final String JSON = "json";
@@ -60,15 +62,11 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     isLogin = true;
                     loadingDialog.dissMiss();
                     //保存登录信息
-                    String loginInfo = msg.obj.toString();
+                    loginInfo = msg.obj.toString();
                     System.out.println("登录信息:" + loginInfo);
                     SharedPreferenceUtils.saveString(getApplicationContext(), LOGIN_INFO, loginInfo);
                     SharedPreferenceUtils.saveBoolean(getApplicationContext(), IS_LOGIN, isLogin);
-                    Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
-                    intent.putExtra(LOGIN_INFO, loginInfo);
-                    intent.putExtra(IS_LOGIN, isLogin);
-                    startActivity(intent);
-                    finish();
+                    devicePull();
                     break;
 
                 case LOGIN_FAILED:
@@ -82,6 +80,12 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     loadingDialog.dissMiss();
                     System.out.println("msg.obj：" + msg.obj.toString());
                     Toast.makeText(SplashActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    break;
+
+                case SYNC_FINISHED:
+                    Intent intent = new Intent(SplashActivity.this, DeviceActivity.class);
+                    startActivity(intent);
+                    finish();
                     break;
             }
         }
@@ -173,7 +177,6 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
                     message.obj = info;
                     handler.sendMessage(message);
                 }
-
             }
         }).start();
     }
@@ -260,5 +263,18 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
             finish();
             System.exit(0);
         }
+    }
+
+    private void devicePull(){
+        new Thread(){
+            @Override
+            public void run() {
+                Message message = new Message();
+                DatabaseOperator databaseOperator  = DatabaseOperator.getInstance(getApplicationContext());
+                databaseOperator.addFromJsonArray( WebService.httpDevicePull(loginInfo),"device");
+                message.what = SYNC_FINISHED;
+                handler.sendMessage(message);
+            }
+        }.start();
     }
 }

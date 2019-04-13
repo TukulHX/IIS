@@ -24,6 +24,11 @@
     <servlet-name>deviceSyncLet</servlet-name>
     <servlet-class>com.servlet.deviceSyncLet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>devicePullLet</servlet-name>
+    <servlet-class>com.servlet.devicePullLet</servlet-class>
+  </servlet>
+  
   
   <servlet-mapping>
     <servlet-name>usrLogLet</servlet-name>
@@ -48,6 +53,10 @@
   <servlet-mapping>
     <servlet-name>deviceSyncLet</servlet-name>
     <url-pattern>/deviceSyncLet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>devicePullLet</servlet-name>
+    <url-pattern>/devicePullLet</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>

@@ -60,7 +60,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     public static final int CONNECTION_FAILED = 0;
     public static final int CONNECTION_SUCCESS = 1;
-    private static final int LOGIN_SUCCESS = 2;
+    private static final int SYNC_FINISHED = 2;
 
     public static final String CONFIG = "config";
     public static final String USER_ID = "user_id";
@@ -260,9 +260,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 if (localTime.compareTo(webTime) > 0 || webTime.equals("NULL")) { //本地有新数据或网络无数据
                     String json = dbOperator.queryRecentData(webTime,userId);
                     Log.e(TAG, "upload");
-                    WebService.upLoad(userId, json);
+                    WebService.httpDataPush(userId, json);
                 } else {         //下拉
-                    dbOperator.addFromJsonArray(WebService.pull(userId, localTime));
+                    dbOperator.addFromJsonArray(WebService.httpDataPull(userId, localTime),"data");
                 }
             }
         }.start();

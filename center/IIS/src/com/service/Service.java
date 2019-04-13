@@ -133,6 +133,29 @@ public class Service {
 		return "[]";
 	}
 	
+	public String getAllDevice(String userId) {
+		// 获取Sql查询语句
+		String Sql = "select * from device where user_id = "+ userId;
+		
+		System.out.println("pull" + Sql);
+				// 获取DB对象
+		DBManager sql = DBManager.createInstance();
+		sql.connectDB();
+				// 操作DB对象
+		ResultSet rs = sql.executeQuery(Sql);
+		JsonHandler handler = new JsonHandler();
+		String ret;
+		try {
+			ret = handler.handle(rs).toString();
+			sql.closeDB();
+			return ret;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "[]";
+	}
+	
 	public Boolean execUpdate(String sql) {
 		System.out.print("exect Sql " + sql);
 		DBManager db = DBManager.createInstance();

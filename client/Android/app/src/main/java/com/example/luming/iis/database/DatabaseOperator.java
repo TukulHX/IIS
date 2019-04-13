@@ -40,8 +40,8 @@ public class DatabaseOperator {
     public void closeDB() {
         if (db != null) {
             db.close();
-            databaseOperator = null;
         }
+        databaseOperator = null;
     }
 
     public void addDevice(Device device) {
@@ -125,7 +125,7 @@ public class DatabaseOperator {
         db.execSQL("insert into data (user_id,module_name,send,value) values(?,?,?,?)", new Object[]{user_id,name, send, value});
     }
 
-    public void addFromJsonArray(String jsonArrayStr) {
+    public void addFromJsonArray(String jsonArrayStr,String table) {
         try {
             JSONArray jsonArray = new JSONArray(jsonArrayStr);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -144,7 +144,7 @@ public class DatabaseOperator {
                         }
                     }
                 }
-                String sql = "insert into data(" + item + ") values(" + value + ")";
+                String sql = "insert into " + table + "( "+ item + ") values(" + value + ")";
                 Log.e("pull", sql);
                 db.execSQL(sql);
             }
