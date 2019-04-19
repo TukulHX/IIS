@@ -3,6 +3,10 @@
 #include<fcntl.h>
 #include<sys/stat.h>
 #include <sys/prctl.h>
+#include<pthread.h>
+static pthread_t  thread_loop;
+extern void setHardWareSpeed(int,pthread_t *);
+
 int exist(char * process_name)
 {
 	int count = 0;
@@ -26,12 +30,14 @@ void setSpeed(char * buffer){
                 perror("open");
                 exit(1);
         }
+	// save log
         int len = 0;
         while(buffer[len] != 0)  len++;
         write(fd,buffer, len);
         write(fd,"\n",1);
         close(fd);
-
+	int speed = atoi(buffer);
+	setHardWareSpeed(speed, &thread_loop);
 }
 
 void createDamonifNotExist()
@@ -65,6 +71,7 @@ void createDamonifNotExist()
 
 int main(int argc, char ** argv)
 {
+	//argv[1] = "123";
 	createDamonifNotExist();
 	int pipe_fd;
 	const char * fifo_name = "/tmp/fan_d";
