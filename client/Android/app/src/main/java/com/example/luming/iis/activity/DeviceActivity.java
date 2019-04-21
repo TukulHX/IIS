@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,7 +21,6 @@ import com.example.luming.iis.base.BaseActivity;
 import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.dialog.AddDeviceDialog;
-import com.example.luming.iis.dialog.modifyDeviceDialog;
 import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.MySocket;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
@@ -39,9 +39,9 @@ import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FA
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_SUCCESS;
 
 /**
- * TODO 物理返回按键监听
+ * TODO 下拉刷新
  */
-public class DeviceActivity extends BaseActivity implements View.OnClickListener {
+public class DeviceActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "DeviceActivity";
     public static final String SP_NULL = "SP_NULL";
     private DatabaseOperator dbOperator;
@@ -84,6 +84,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         }
     };
     private MySocket socket;
+    private SwipeRefreshLayout swipeRefresh;
 
     public static void ToDeviceActivity(Context context) {
         Intent intent = new Intent(context, DeviceActivity.class);
@@ -110,7 +111,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         bt_add = findViewById(R.id.bt_add);
         tv_title = findViewById(R.id.tv_title);
         tv_logout = findViewById(R.id.tv_logout);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
         dbOperator = DatabaseOperator.getInstance(this);
+        swipeRefresh.setOnRefreshListener(this);
 
         // TODO 以后可以将userId 与 loginInfo 分开
         userId =  SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "-1");
@@ -139,16 +142,25 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void initEvent() {
-//        sp = getSharedPreferences(CONFIG, 0);
-//        // 获取登陆信息并同步--start
-//        userId = sp.getString(USER_NAME, SP_NULL);
-//        if (userId.equals(SP_NULL)) {
-//            btnLog.setText("点击登陆");
-//        } else {
-//            btnLog.setText("用户ID: " + userId);
-//            sync();
-//        }
-        // 获取登陆信息并同步--end
+
+    }
+
+    /**
+     * 下拉刷新监听方法
+     */
+    @Override
+    public void onRefresh() {
+        //添加刷新方法即可
+        //添加成功之后，sendMessage, 同步刷新成功标志REFRESH_SUCCESS  在handler中调用该方法关闭刷新圈        swipeRefresh.setRefreshing(false);
+        //添加失败之后，标志REFRESH_FAIL, 在handler中也调用该方法，然后提示toast即可。
+        //这里模拟
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefresh.setRefreshing(false);
+            }
+        }, 1500);
+
     }
 
     @Override

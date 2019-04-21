@@ -102,8 +102,8 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
         if (isLogin) {
-            finish();
             DeviceActivity.ToDeviceActivity(this);
+            finish();
         }
         else {
             setContentView(R.layout.activity_splash);
