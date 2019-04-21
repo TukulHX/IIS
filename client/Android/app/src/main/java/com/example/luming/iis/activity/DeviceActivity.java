@@ -20,6 +20,7 @@ import com.example.luming.iis.base.BaseActivity;
 import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.dialog.AddDeviceDialog;
+import com.example.luming.iis.dialog.modifyDeviceDialog;
 import com.example.luming.iis.dialog.LoadingDialog;
 import com.example.luming.iis.utils.MySocket;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
@@ -280,7 +281,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     private long mExitTime;
 
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             exit();

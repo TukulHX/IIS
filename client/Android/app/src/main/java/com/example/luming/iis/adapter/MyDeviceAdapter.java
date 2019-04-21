@@ -17,6 +17,7 @@ import com.example.luming.iis.R;
 import com.example.luming.iis.activity.DeviceActivity;
 import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
+import com.example.luming.iis.dialog.modifyDeviceDialog;
 
 import java.util.List;
 
@@ -95,6 +96,16 @@ public class MyDeviceAdapter extends BaseAdapter {
                 context.onResume();
             }
         });
+	vh.bt_modify.setOnClickListener(new View.OnClickListener(){
+	    @Override
+	    public void onClick(View v){
+                modifyDeviceDialog.newInstance(context).setOnAddDeviceListener(new modifyDeviceDialog.OnModifyDeviceListener() {
+                    @Override
+                    public void getDevice(String name, String ip, String port) {
+                    }
+                }).showDialog(context);
+	    }
+	});
         vh.cv_desc.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
