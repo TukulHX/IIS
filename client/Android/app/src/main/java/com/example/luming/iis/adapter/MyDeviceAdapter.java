@@ -101,7 +101,9 @@ public class MyDeviceAdapter extends BaseAdapter {
 	    public void onClick(View v){
                 modifyDeviceDialog.newInstance(context).setOnAddDeviceListener(new modifyDeviceDialog.OnModifyDeviceListener() {
                     @Override
-                    public void getDevice(String name, String ip, String port) {
+                    public void modifyDevice(String nName, String nIp, String nPort) {
+			dbOperator.updateDevice(user_id, device, new Device(nName, nIp, nPort));
+			context.onResume();
                     }
                 }).showDialog(context);
 	    }

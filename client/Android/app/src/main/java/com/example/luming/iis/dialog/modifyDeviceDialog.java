@@ -96,7 +96,7 @@ public class modifyDeviceDialog extends DialogFragment implements View.OnClickLi
                 name = name + index;
                 if (name.equals("") || ip.equals("") || port.equals(""))
                     return;
-                listener.getDevice(name, ip, port);
+                listener.modifyDevice(name, ip, port);
             }
             dismiss();
         }
@@ -117,7 +117,7 @@ public class modifyDeviceDialog extends DialogFragment implements View.OnClickLi
 
 
     public interface OnModifyDeviceListener {
-        void getDevice(String name, String ip, String port);
+        void modifyDevice(String nName, String nIp, String nPort);
 
 //        void onRightButtonClick(View v);
     }
