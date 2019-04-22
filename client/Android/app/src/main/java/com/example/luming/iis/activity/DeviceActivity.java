@@ -85,6 +85,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     };
     private MySocket socket;
     private SwipeRefreshLayout swipeRefresh;
+    private Boolean isLogin;
 
     public static void ToDeviceActivity(Context context) {
         Intent intent = new Intent(context, DeviceActivity.class);
@@ -124,7 +125,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         //先设置Logout为Login
         tv_logout.setText("Login");
         //设置logout是否可见
-        Boolean isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
+        isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
         if (isLogin) {
             //设置可见
             tv_logout.setText("Logout");
@@ -150,17 +151,15 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
      */
     @Override
     public void onRefresh() {
-        //添加刷新方法即可
-        //添加成功之后，sendMessage, 同步刷新成功标志REFRESH_SUCCESS  在handler中调用该方法关闭刷新圈        swipeRefresh.setRefreshing(false);
-        //添加失败之后，标志REFRESH_FAIL, 在handler中也调用该方法，然后提示toast即可。
-        //这里模拟
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefresh.setRefreshing(false);
-            }
-        }, 1500);
-
+        if (isLogin) {
+            deviceSync();
+            dataSync();
+            swipeRefresh.setRefreshing(false);
+            TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_SUCCESS, "同步设备和数据成功", handler);
+        } else {
+            swipeRefresh.setRefreshing(false);
+            Toast.makeText(this,"请在登录后再次进行同步操作！",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
