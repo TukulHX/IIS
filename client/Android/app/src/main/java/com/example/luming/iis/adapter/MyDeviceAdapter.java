@@ -17,12 +17,11 @@ import com.example.luming.iis.R;
 import com.example.luming.iis.activity.DeviceActivity;
 import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
-import com.example.luming.iis.dialog.modifyDeviceDialog;
+import com.example.luming.iis.dialog.ModifyDeviceDialog;
 
 import java.util.List;
 
 /**
- * TODO 稍后替换UI效果，会更改为RecyclerView
  * Created by TukulHX on 2019/4/4
  */
 public class MyDeviceAdapter extends BaseAdapter {
@@ -83,12 +82,14 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.tv_deviceIP.setText(device.getIp());
         vh.tv_devicePort.setText(String.valueOf(device.getPort()));
         vh.iv_direction.setBackgroundResource(R.drawable.right);
+        //连接
         vh.bt_conn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.connection(device.getIp(), Integer.getInteger( device.getPort() ));
+                context.connection(device.getIp(), Integer.getInteger(device.getPort()));
             }
         });
+        //删除
         vh.bt_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,18 +97,20 @@ public class MyDeviceAdapter extends BaseAdapter {
                 context.onResume();
             }
         });
-	vh.bt_modify.setOnClickListener(new View.OnClickListener(){
-	    @Override
-	    public void onClick(View v){
-                modifyDeviceDialog.newInstance(context).setOnAddDeviceListener(new modifyDeviceDialog.OnModifyDeviceListener() {
+        //修改
+        vh.bt_modify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ModifyDeviceDialog.newInstance(context, device).setOnModifyDeviceListener(new ModifyDeviceDialog.OnModifyDeviceListener() {
                     @Override
                     public void modifyDevice(String nName, String nIp, String nPort) {
-			dbOperator.updateDevice(user_id, device, new Device(nName, nIp, nPort));
-			context.onResume();
+                        dbOperator.updateDevice(user_id, device, new Device(nName, nIp, nPort));
+                        context.onResume();
                     }
                 }).showDialog(context);
-	    }
-	});
+            }
+        });
+        //UI效果
         vh.cv_desc.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

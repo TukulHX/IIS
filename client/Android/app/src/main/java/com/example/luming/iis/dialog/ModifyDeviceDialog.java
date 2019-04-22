@@ -16,30 +16,33 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.bean.Device;
 import com.example.luming.iis.database.DatabaseOperator;
 
 /**
  * Created by TukulHX on 2019/4/4
- *
  */
-public class modifyDeviceDialog extends DialogFragment implements View.OnClickListener {
+public class ModifyDeviceDialog extends DialogFragment implements View.OnClickListener {
 
     private TextView tv_title;
     private Button bt_left, bt_right;
     private EditText et_name, et_ip, et_port;
     private OnModifyDeviceListener listener;
     private static DatabaseOperator dbOperator;
-    public static final String TAG = "modifyDeviceDialog";
+    public static final String TAG = "ModifyDeviceDialog";
+    public static final String IP = "ip";
+    public static final String NAME = "name";
+    public static final String PORT = "port";
 
-    public static modifyDeviceDialog newInstance(Context context) {
-        modifyDeviceDialog dialog = new modifyDeviceDialog();
+    public static ModifyDeviceDialog newInstance(Context context, Device device) {
+        ModifyDeviceDialog dialog = new ModifyDeviceDialog();
         dbOperator = DatabaseOperator.getInstance(context);
-//        Bundle args = new Bundle();
-//        args.putString(HEAD, header);
-//        args.putString(HEAD_DESC, headerDesc);
-//        args.putString(LEFT_BTN, leftBtn);
-//        args.putString(RIGHT_BTN, rightBtn);
-//        dialog.setArguments(args);
+
+        Bundle args = new Bundle();
+        args.putString(IP, device.getIp());
+        args.putString(NAME, device.getName());
+        args.putString(PORT, device.getPort());
+        dialog.setArguments(args);
         return dialog;
     }
 
@@ -54,16 +57,20 @@ public class modifyDeviceDialog extends DialogFragment implements View.OnClickLi
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metric);
         int width = metric.widthPixels;
 
-	tv_title = view.findViewById(R.id.tv_title);
+        tv_title = view.findViewById(R.id.tv_title);
         et_name = view.findViewById(R.id.et_name);
         et_ip = view.findViewById(R.id.et_ip);
         et_port = view.findViewById(R.id.et_port);
         bt_left = view.findViewById(R.id.bt_left);
         bt_right = view.findViewById(R.id.bt_right);
 
+        et_ip.setText(getArguments().getString(IP));
+        et_name.setText(getArguments().getString(NAME));
+        et_port.setText(getArguments().getString(PORT));
+
         bt_left.setOnClickListener(this);
         bt_right.setOnClickListener(this);
-	tv_title.setText("修改设备");
+        tv_title.setText("修改设备");
 
         //设置宽度只占屏幕宽度的80%
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -102,7 +109,7 @@ public class modifyDeviceDialog extends DialogFragment implements View.OnClickLi
         }
     }
 
-    public modifyDeviceDialog setOnAddDeviceListener(OnModifyDeviceListener listener) {
+    public ModifyDeviceDialog setOnModifyDeviceListener(OnModifyDeviceListener listener) {
         this.listener = listener;
         return this;
     }
@@ -118,8 +125,6 @@ public class modifyDeviceDialog extends DialogFragment implements View.OnClickLi
 
     public interface OnModifyDeviceListener {
         void modifyDevice(String nName, String nIp, String nPort);
-
-//        void onRightButtonClick(View v);
     }
 
 
