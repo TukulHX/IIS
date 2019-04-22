@@ -235,7 +235,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 try {
                     socket = MySocket.getInstance();
                     SocketAddress socketAddress = new InetSocketAddress(host, port);
-                    socket.connect(socketAddress, 300);
+                    socket.connect(socketAddress, 3000);
                     InputStream in = MySocket.getIn();
                     byte[] buffer = new byte[1024];
                     in.read(buffer, 0, buffer.length);

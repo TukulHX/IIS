@@ -86,7 +86,7 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.bt_conn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.connection(device.getIp(), Integer.getInteger(device.getPort()));
+                context.connection(device.getIp(), Integer.valueOf(device.getPort()));
             }
         });
         //删除
