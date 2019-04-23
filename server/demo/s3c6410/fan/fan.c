@@ -1,19 +1,40 @@
 #include<stdio.h>
-#include<unistd.h>
-#include<fcntl.h>
-#include<sys/stat.h>
-#include <sys/prctl.h>
+#include<string.h>
+#include "bsp.h"
+
+//dcmotor
+#define MOTERK1 S3C6410_PIO_PK2
+#define MOTERK2 S3C6410_PIO_PD3
+#define MOTERK3 S3C6410_PIO_PD4
+#define MOTERK4 S3C6410_PIO_PF13
+
+
+int bsp_init(void)
+{
+        open_port_device();
+        return 0;
+}
 
 
 int main(int argc, char ** argv)
 {
-	//argv[1] = "123";
-	int pipe_fd;
-	const char * fifo_name = "/tmp/fan_d";
-	if(access(fifo_name,F_OK) == -1){
-		mkfifo(fifo_name,0777);
+	bsp_init();
+	int speed = atoi(argv[1]);
+	int tmp;
+	port_write(MOTERK2,0);
+        port_write(MOTERK1,1);
+	if( speed == 0){
+		port_write(MOTERK3,0);
+		return 0;
 	}
-	pipe_fd = open(fifo_name,O_WRONLY);
-	write(pipe_fd,argv[1],1024);
-	close(pipe_fd);
+	else
+	    tmp = 100 / speed;
+	while(1)
+	{
+		for(int i = 0; i < 100; i++)
+		    if( i % tmp == 0)
+			port_write(MOTERK3,1);
+		    else
+			port_write(MOTERK3,0);
+	}
 }
