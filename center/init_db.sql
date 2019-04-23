@@ -29,7 +29,7 @@ create table device
 	ip varchar(20),
 	port varchar(20)
 
-);
+) DEFAULT CHARSET=UTF8;
 
 insert into user(username,password) value('lm','123');
 
