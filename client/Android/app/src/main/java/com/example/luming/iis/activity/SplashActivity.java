@@ -102,8 +102,8 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
         if (isLogin) {
-            finish();
             DeviceActivity.ToDeviceActivity(this);
+            finish();
         }
         else {
             setContentView(R.layout.activity_splash);
@@ -162,21 +162,26 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
             @Override
             public void run() {
                 Message message = new Message();
-                String info = WebService.httpLogin(name, password);
-                System.out.println("点击了登录:" + info);
-                if (info.equals("false")) {
-                    message.what = NET_ERROR;
-                    message.obj = "请检查网络";
-                    handler.sendMessage(message);
-                } else if (info.equals(LOGIN_NULL)) {
-                    message.what = LOGIN_FAILED;
-                    message.obj = "登陆失败,请检查账号密码";
-                    handler.sendMessage(message);
-                } else {
-                    message.what = LOGIN_SUCCESS;
-                    message.obj = info;
-                    handler.sendMessage(message);
-                }
+                String ret = WebService.httpLogin(name, password);
+		String status = ret.split("&")[0];
+		if ( status.equals("success") ){
+		    String info = ret.split("&")[1];
+		    if(info.equals(LOGIN_NULL)){
+		        message.what = LOGIN_FAILED;
+			message.obj = "登陆失败,请检查账号密码";
+			handler.sendMessage(message);
+		    }
+		    else{
+			message.what = LOGIN_SUCCESS;
+			message.obj = info;
+			handler.sendMessage(message);
+		    }
+		}
+		else{
+		    message.what = NET_ERROR;
+		    message.obj = "请检查网络";
+		    handler.sendMessage(message);
+		}
             }
         }).start();
     }

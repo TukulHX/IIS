@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -38,9 +39,9 @@ import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_FA
 import static com.qmuiteam.qmui.widget.dialog.QMUITipDialog.Builder.ICON_TYPE_SUCCESS;
 
 /**
- * TODO 物理返回按键监听
+ * TODO 下拉刷新
  */
-public class DeviceActivity extends BaseActivity implements View.OnClickListener {
+public class DeviceActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "DeviceActivity";
     public static final String SP_NULL = "SP_NULL";
     private DatabaseOperator dbOperator;
@@ -83,6 +84,8 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         }
     };
     private MySocket socket;
+    private SwipeRefreshLayout swipeRefresh;
+    private Boolean isLogin;
 
     public static void ToDeviceActivity(Context context) {
         Intent intent = new Intent(context, DeviceActivity.class);
@@ -109,7 +112,9 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         bt_add = findViewById(R.id.bt_add);
         tv_title = findViewById(R.id.tv_title);
         tv_logout = findViewById(R.id.tv_logout);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
         dbOperator = DatabaseOperator.getInstance(this);
+        swipeRefresh.setOnRefreshListener(this);
 
         // TODO 以后可以将userId 与 loginInfo 分开
         userId =  SharedPreferenceUtils.getString(getApplicationContext(), LOGIN_INFO, "-1");
@@ -120,7 +125,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         //先设置Logout为Login
         tv_logout.setText("Login");
         //设置logout是否可见
-        Boolean isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
+        isLogin = SharedPreferenceUtils.getBoolean(getApplicationContext(), IS_LOGIN, false);
         if (isLogin) {
             //设置可见
             tv_logout.setText("Logout");
@@ -138,16 +143,23 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void initEvent() {
-//        sp = getSharedPreferences(CONFIG, 0);
-//        // 获取登陆信息并同步--start
-//        userId = sp.getString(USER_NAME, SP_NULL);
-//        if (userId.equals(SP_NULL)) {
-//            btnLog.setText("点击登陆");
-//        } else {
-//            btnLog.setText("用户ID: " + userId);
-//            sync();
-//        }
-        // 获取登陆信息并同步--end
+
+    }
+
+    /**
+     * 下拉刷新监听方法
+     */
+    @Override
+    public void onRefresh() {
+        if (isLogin) {
+            deviceSync();
+            dataSync();
+            swipeRefresh.setRefreshing(false);
+            TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_SUCCESS, "同步设备和数据成功", handler);
+        } else {
+            swipeRefresh.setRefreshing(false);
+            Toast.makeText(this,"请在登录后再次进行同步操作！",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -223,7 +235,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 try {
                     socket = MySocket.getInstance();
                     SocketAddress socketAddress = new InetSocketAddress(host, port);
-                    socket.connect(socketAddress, 300);
+                    socket.connect(socketAddress, 3000);
                     InputStream in = MySocket.getIn();
                     byte[] buffer = new byte[1024];
                     in.read(buffer, 0, buffer.length);
@@ -280,7 +292,6 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     private long mExitTime;
 
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             exit();
