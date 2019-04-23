@@ -33,6 +33,7 @@ public class deviceSyncLet extends HttpServlet {
 		Service serv = new Service();
 				
 		String encodedSql = request.getParameter("sql");
+                encodedSql.replace(" ", "+");
 		byte[] base64decodedBytes = Base64.getDecoder().decode(encodedSql);
 		String sql = new String(base64decodedBytes,"utf-8");
 		Boolean ret = serv.execUpdate(sql);
