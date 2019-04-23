@@ -15,7 +15,6 @@ import com.service.Service;
 
 public class usrLogLet extends HttpServlet {
 
-	private static final long serialVersionUID = 369840050351775312L;
 
 	/**
 	 * The doGet method of the Server let.
@@ -45,7 +44,7 @@ public class usrLogLet extends HttpServlet {
 
 		// 验证处理
 		info = serv.login(username, password);
-				
+		info = "success&" + info;	
 		// 返回信息
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
