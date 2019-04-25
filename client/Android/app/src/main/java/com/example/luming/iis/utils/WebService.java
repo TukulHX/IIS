@@ -38,7 +38,7 @@ public class WebService {
     }
 
     public static String getWebRecTime(String userId) {
-        String path = "http://" + IP + "/IIS/RecLet?id=" + userId;
+        String path = "http://" + IP + "/IIS/dataRecLet?id=" + userId;
         return connect(path);
     }
 

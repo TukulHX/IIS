@@ -83,16 +83,20 @@ public class Service {
 			for(int i = 0; i < jsonarray.length(); i++) // 遍历 JsonArray 
 			{
 				JSONObject json = jsonarray.getJSONObject(i);
-				String item = "user_id";
-				String values = id;
+				String item = "";
+				String values = "";
 				Iterator it = json.keys();
 				while(it.hasNext())  //便利Json 
 				{
 					String key = it.next().toString();
 					if(null!=key && !key.equals("id"))
 					{
-						item =  item + "," + key ;
-						values = values + ",\'"+json.getString(key)+"\'";
+						item =  item + key;
+						values = values + "\'"+json.getString(key)+"\'";
+						if(it.hasNext()) {
+							item += " ,";
+							values += " ,";
+						}
 					}	
 				}
 				String sql = "insert into data(" + item + ") values("+ values+")";
@@ -113,7 +117,7 @@ public class Service {
 			Sql = "select module_name,send,value,time from data where user_id = " + userId;
 		else
 			Sql = "select module_name,send,value,time from data where user_id = "+
-		 userId + "vand time > " + time + "order by time desc";
+		 userId + " and time > '" + time + "' order by time desc";
 		System.out.println("pull" + Sql);
 				// 获取DB对象
 		DBManager sql = DBManager.createInstance();
