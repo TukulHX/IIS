@@ -54,7 +54,18 @@ class MyServer(socketserver.BaseRequestHandler):
 			elif component['type'] == 'setter':
 				os.system(component['cmd']+" " + data['value'])
 				respons = {'content':'success'}
-						
+			
+			elif component['type'] == 'trigger':
+				if(data['option'] == 'start'):
+					if os.fork() > 0:
+						 respons = {'content':'success'}
+					else:
+						event_stream = os.popen( component['event'] )   # start event
+						ret = event_stream.read()                       # may be block
+						invoke_stream = os.popen(component['invoke'])   # return saved file path
+						file_path = invoke_stream.read()
+						with open(component['path'],a) as f:
+							f.write(file_path)
 			respons = json.dumps(respons)
 			conn.sendall(respons.encode())
 			print(respons,'sended')
