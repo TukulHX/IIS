@@ -8,7 +8,7 @@ public class DBManager {
 	public static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	public static final String USER = "root";
 	public static final String PASS = "root";
-	public static final String URL = "jdbc:mysql://localhost:3306/IIS?serverTimezone=UTC&autoReconnect=true&useSSL=false";
+	public static final String URL = "jdbc:mysql://localhost:3306/IIS?characterEncoding=utf-8&serverTimezone=UTC&autoReconnect=true&useSSL=false";
 	
 	//把MySQL-USER和MySQL-PASS改为你的服务器mysql账户和密码
 
