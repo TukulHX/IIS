@@ -94,13 +94,10 @@ public class ModifyDeviceDialog extends DialogFragment implements View.OnClickLi
         }
         if (v.getId() == R.id.bt_right) {
             if (listener != null) {
-                //方便调试
-                long index = System.currentTimeMillis();
                 //获取输入内容
                 String name = et_name.getText().toString().trim();
                 String ip = et_ip.getText().toString().trim();
                 String port = et_port.getText().toString().trim();
-                name = name + index;
                 if (name.equals("") || ip.equals("") || port.equals(""))
                     return;
                 listener.modifyDevice(name, ip, port);
