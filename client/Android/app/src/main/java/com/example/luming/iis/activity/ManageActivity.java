@@ -12,6 +12,7 @@ import com.example.luming.iis.adapter.ManageVPAdapter;
 import com.example.luming.iis.base.BaseActivity;
 import com.example.luming.iis.fragment.ActionFragment;
 import com.example.luming.iis.fragment.StatusFragment;
+import com.example.luming.iis.fragment.TriggerFragment;
 import com.example.luming.iis.utils.MySocket;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 
@@ -26,6 +27,7 @@ public class ManageActivity extends BaseActivity {
     private List<Fragment> fragments;
     private StatusFragment statusFragment;
     private ActionFragment actionFragment;
+    private TriggerFragment triggerFragment;
     private ManageVPAdapter vpAdapter;
     public static final String JSON = "json";
 
@@ -52,14 +54,17 @@ public class ManageActivity extends BaseActivity {
         tv_title = findViewById(R.id.tv_title);
         actionFragment = new ActionFragment();
         statusFragment = new StatusFragment();
+        triggerFragment = new TriggerFragment();
         fragments.add(actionFragment);
         fragments.add(statusFragment);
+        fragments.add(triggerFragment);
         vpAdapter = new ManageVPAdapter(getSupportFragmentManager(), fragments);
         vp_content.setAdapter(vpAdapter);
-        vp_content.setOffscreenPageLimit(2);
+        vp_content.setOffscreenPageLimit(3);
         vp_content.addOnPageChangeListener(new MyOnPageChangeListener());
-        tabSegment.addTab(new QMUITabSegment.Tab("检测"));
         tabSegment.addTab(new QMUITabSegment.Tab("控制"));
+        tabSegment.addTab(new QMUITabSegment.Tab("检测"));
+        tabSegment.addTab(new QMUITabSegment.Tab("事件"));
         tabSegment.setHasIndicator(true);//设置包含指示器
         tabSegment.setMode(QMUITabSegment.MODE_FIXED);//设置均分宽度
         tabSegment.setIndicatorWidthAdjustContent(false);//指示器宽度不随内容变化
