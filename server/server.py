@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import platform
+import thread
 if sys.version_info.major is 3:
 	import socketserver
 	from json.decoder import JSONDecodeError
@@ -12,8 +13,17 @@ else:
 from libs.helper import *
 config = None
 
+def trigger_thread(event, invoke, outpath):
+        print("start new thread", event, invoke, outpath)
+	event_stream = os.popen( event )   # start event
+	ret = event_stream.read()                       # may be block
+	invoke_stream = os.popen( invoke )   # return saved file path
+	file_path = invoke_stream.read()
+	with open( outpath,'a') as f:
+		f.write(file_path)
+
 class MyServer(socketserver.BaseRequestHandler):
-        
+
 	def handle(self):
 		print(self.request,self.client_address,self.server)
 		conn = self.request
@@ -37,6 +47,7 @@ class MyServer(socketserver.BaseRequestHandler):
 				data = json.loads(raw_data)
 			except ValueError:
 				print('Json Decode error')
+                                break
 			print(data,'receive')
 			if sys.version_info.major is 3:
 				component = config[data['name']]
@@ -50,23 +61,17 @@ class MyServer(socketserver.BaseRequestHandler):
 
 			elif component['type'] == 'status':
 				respons = {'content':os.popen(component["cmd"]).read()}
-				
+
 			elif component['type'] == 'setter':
 				os.system(component['cmd']+" " + data['value'])
 				respons = {'content':'success'}
-			
+
 			elif component['type'] == 'trigger':
-				if(data['option'] == 'start'):
-					if os.fork() > 0:
-						 respons = {'content':'success'}
-					else:
-						event_stream = os.popen( component['event'] )   # start event
-						ret = event_stream.read()                       # may be block
-						invoke_stream = os.popen(component['invoke'])   # return saved file path
-						file_path = invoke_stream.read()
-						with open(component['path'],a) as f:
-							f.write(file_path)
-			respons = json.dumps(respons)
+				if(data['value'] == 'start'):
+			            thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))	
+		                    respons = {'content':'success'}
+
+                        respons = json.dumps(respons)
 			conn.sendall(respons.encode())
 			print(respons,'sended')
 
