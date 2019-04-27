@@ -5,6 +5,7 @@ import os
 import sys
 import platform
 import thread
+import time
 if sys.version_info.major is 3:
 	import socketserver
 	from json.decoder import JSONDecodeError
@@ -19,7 +20,8 @@ def trigger_thread(event, invoke, outpath):
 	ret = event_stream.read()                       # may be block
 	invoke_stream = os.popen( invoke )   # return saved file path
 	file_path = invoke_stream.read()
-	with open( outpath,'a') as f:
+        localtime = time.strftime("%y_%m_%d_%H_%M_%S")
+	with open( outpath + localtime ,'a') as f:
 		f.write(file_path)
 
 class MyServer(socketserver.BaseRequestHandler):
@@ -42,6 +44,7 @@ class MyServer(socketserver.BaseRequestHandler):
 		print(respons,'sended')
 		flag = True
 		while flag:
+                        respons = {}
 			raw_data = conn.recv(1024).decode()
 			try:
 				data = json.loads(raw_data)
@@ -70,6 +73,18 @@ class MyServer(socketserver.BaseRequestHandler):
 				if(data['value'] == 'start'):
 			            thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))	
 		                    respons = {'content':'success'}
+                                elif data['value'] == 'fetch':
+                                    num = 0
+                                    for log in os.listdir(component['path']):
+                                        with open(component['path'] + log, 'r') as f:
+                                            file = f.read()
+                                            with open(file,'r') as f2:
+                                                print("luming",type(respons),respons)
+                                                respons['extra'+ str(num)] = f2.read()
+                                            respons['type'+ str(num)] = file.split('.')[1]
+                                        num = num + 1
+                                        os.remove(component['path'] + log)
+                                    respons['content'] = num
 
                         respons = json.dumps(respons)
 			conn.sendall(respons.encode())
