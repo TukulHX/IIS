@@ -21,7 +21,7 @@ def trigger_thread(event, invoke, outpath):
 	invoke_stream = os.popen( invoke )   # return saved file path
 	file_path = invoke_stream.read()
         localtime = time.strftime("%y_%m_%d_%H_%M_%S")
-	with open( outpath + localtime ,'a') as f:
+	with open( outpath + localtime ,'w') as f:
 		f.write(file_path)
 
 class MyServer(socketserver.BaseRequestHandler):
