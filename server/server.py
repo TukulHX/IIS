@@ -4,22 +4,27 @@ import json
 import os
 import sys
 import platform
-import thread
+import time
+import base64
+import struct
 if sys.version_info.major is 3:
 	import socketserver
 	from json.decoder import JSONDecodeError
+	import _thread as thread
 else:
 	import SocketServer as socketserver
+	import thread
 from libs.helper import *
 config = None
 
 def trigger_thread(event, invoke, outpath):
-        print("start new thread", event, invoke, outpath)
-	event_stream = os.popen( event )   # start event
-	ret = event_stream.read()                       # may be block
-	invoke_stream = os.popen( invoke )   # return saved file path
+	print("start new thread", event, invoke, outpath)
+	event_stream = os.popen( event )	# start event
+	ret = event_stream.read()		# may be block
+	invoke_stream = os.popen( invoke )	# return saved file path
 	file_path = invoke_stream.read()
-	with open( outpath,'a') as f:
+	localtime = time.strftime("%y_%m_%d_%H_%M_%S")
+	with open( outpath + localtime ,'w') as f:
 		f.write(file_path)
 
 class MyServer(socketserver.BaseRequestHandler):
@@ -42,12 +47,13 @@ class MyServer(socketserver.BaseRequestHandler):
 		print(respons,'sended')
 		flag = True
 		while flag:
+			respons = {}
 			raw_data = conn.recv(1024).decode()
 			try:
 				data = json.loads(raw_data)
 			except ValueError:
 				print('Json Decode error')
-                                break
+				break
 			print(data,'receive')
 			if sys.version_info.major is 3:
 				component = config[data['name']]
@@ -68,10 +74,23 @@ class MyServer(socketserver.BaseRequestHandler):
 
 			elif component['type'] == 'trigger':
 				if(data['value'] == 'start'):
-			            thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))	
-		                    respons = {'content':'success'}
-
-                        respons = json.dumps(respons)
+					thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))
+					respons = {'content':'success'}
+				elif data['value'] == 'fetch':
+					num = 0
+					for log in os.listdir(component['path']):
+						with open(component['path'] + log, 'r') as f:
+							file = f.read()
+							with open(file,'rb') as f2:
+								respons['extra'+ str(num)] = base64.b64encode(f2.read())
+							respons['name'+ str(num)] = file.split('/')[-1] ## get file name
+							num = num + 1
+						os.remove(component['path'] + log)
+					respons['content'] = num
+				size = len(json.dumps(respons))
+				print("fetch size is", size)
+				conn.sendall(struct.pack('>I',size))
+			respons = json.dumps(respons)
 			conn.sendall(respons.encode())
 			print(respons,'sended')
 
