@@ -81,7 +81,7 @@ class MyServer(socketserver.BaseRequestHandler):
                                             with open(file,'r') as f2:
                                                 print("luming",type(respons),respons)
                                                 respons['extra'+ str(num)] = f2.read()
-                                            respons['type'+ str(num)] = file.split('.')[1]
+                                            respons['name'+ str(num)] = file.split('/')[-1] ## get file name
                                         num = num + 1
                                         os.remove(component['path'] + log)
                                     respons['content'] = num
