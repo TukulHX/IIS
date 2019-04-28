@@ -18,7 +18,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/trigger_title"
+            android:textSize="25dp"
+            android:hint="请选择模块"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -37,7 +42,21 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="循环" />
+
+            <Button
+                android:id="@+id/trigger_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="刷新" />
         </LinearLayout>
+    <GridView
+        android:id="@+id/trigger_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit">
+    </GridView>
 
     </LinearLayout>
 
