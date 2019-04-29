@@ -1,19 +1,22 @@
 package com.example.luming.iis.fragment;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Base64;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.activity.ManageActivity;
+import com.example.luming.iis.adapter.ImageAdapter;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
@@ -30,13 +33,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class TriggerFragment extends BaseFragment {
     private ListView listView;
     private List<String> list = new ArrayList<>();
     private ArrayAdapter<String> adapter;
+    private GridView gv_item;
+    private ArrayList<Map<String,Object>>  data = new ArrayList<>();
     private JSONObject config;
     private Button bt_start;
     private Button bt_refresh;
@@ -57,7 +64,7 @@ public class TriggerFragment extends BaseFragment {
                 if( extraNum > 0 ){
                     for(Integer i = 0; i < extraNum; ++i){
                         String name = json.getString("name" + i.toString());
-                        String path = getContext().getFilesDir() + "/" + device_name;
+                        String path = getContext().getFilesDir() + "/" + device_name + "/" + moduleName;
                         File dir = new File(path);
                         if(!dir.exists())
                             dir.mkdirs();
@@ -92,6 +99,7 @@ public class TriggerFragment extends BaseFragment {
         device_name = getActivity().getIntent().getExtras().getString(ManageActivity.DEVICE_NAME,"-1");
         databaseOperator = DatabaseOperator.getInstance(getContext());
         listView = getActivity().findViewById(R.id.trigger_list);
+        gv_item = getActivity().findViewById(R.id.trigger_gridview);
         bt_start = getActivity().findViewById(R.id.trigger_start);
         bt_refresh = getActivity().findViewById(R.id.trigger_refresh);
         tv_title = getActivity().findViewById(R.id.trigger_title);
@@ -142,6 +150,10 @@ public class TriggerFragment extends BaseFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                gv_item =  getActivity().findViewById(R.id.trigger_gridview);
+                getData();
+                BaseAdapter adapter = new ImageAdapter(getContext(),data);
+                gv_item.setAdapter(adapter);
             }
         });
     }
@@ -183,5 +195,14 @@ public class TriggerFragment extends BaseFragment {
                 }
             }
         }.start();
+    }
+    public void getData(){
+        File dir = new File(getContext().getFilesDir() + "/" + device_name + "/" + moduleName);
+        File[] files = dir.listFiles();
+        for(int i = 0; files != null && i < files.length; i++){
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("url",files[i].getAbsoluteFile());
+            data.add(map);
+        }
     }
 }
