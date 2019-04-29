@@ -30,11 +30,12 @@ public class ManageActivity extends BaseActivity {
     private TriggerFragment triggerFragment;
     private ManageVPAdapter vpAdapter;
     public static final String JSON = "json";
+    public static final String DEVICE_NAME = "device_name";
 
-
-    public static void ToManagActivity(Context context, String json) {
+    public static void ToManagActivity(Context context, String config, String device_name) {
         Intent intent = new Intent(context, ManageActivity.class);
-        intent.putExtra(JSON, json);
+        intent.putExtra(JSON, config);
+        intent.putExtra(DEVICE_NAME,device_name);
         context.startActivity(intent);
     }
 

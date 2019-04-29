@@ -86,7 +86,7 @@ public class MyDeviceAdapter extends BaseAdapter {
         vh.bt_conn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.connection(device.getIp(), Integer.valueOf(device.getPort()));
+                context.connection(device);
             }
         });
         //删除
@@ -162,6 +162,5 @@ public class MyDeviceAdapter extends BaseAdapter {
         private ImageView iv_direction;
         private CardView cv_desc;
         private Button bt_conn, bt_modify, bt_delete;
-
     }
 }

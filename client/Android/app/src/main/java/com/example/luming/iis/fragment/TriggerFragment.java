@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.util.Base64;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.activity.ManageActivity;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
@@ -22,14 +23,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +44,7 @@ public class TriggerFragment extends BaseFragment {
     private String moduleName;
     private DatabaseOperator databaseOperator;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
-
+    private String device_name;
     private static final String JSON = "json";
     private static final String START_CMD = "start";
     private static final String REFRESH_CMD = "fetch";
@@ -58,7 +57,13 @@ public class TriggerFragment extends BaseFragment {
                 if( extraNum > 0 ){
                     for(Integer i = 0; i < extraNum; ++i){
                         String name = json.getString("name" + i.toString());
-                        FileOutputStream fileOutputStream = getActivity().openFileOutput(name, Context.MODE_PRIVATE);
+                        String path = getContext().getFilesDir() + "/" + device_name;
+                        File dir = new File(path);
+                        if(!dir.exists())
+                            dir.mkdirs();
+                        File file = new File(path + "/" + name);
+                        file.createNewFile();
+                        FileOutputStream fileOutputStream = new FileOutputStream(path + "/" + name);
                         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
                         byte[] buffer = Base64.decode(json.getString( "extra" + i.toString()),Base64.DEFAULT);
                         bufferedOutputStream.write(buffer);
@@ -84,6 +89,7 @@ public class TriggerFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
+        device_name = getActivity().getIntent().getExtras().getString(ManageActivity.DEVICE_NAME,"-1");
         databaseOperator = DatabaseOperator.getInstance(getContext());
         listView = getActivity().findViewById(R.id.trigger_list);
         bt_start = getActivity().findViewById(R.id.trigger_start);

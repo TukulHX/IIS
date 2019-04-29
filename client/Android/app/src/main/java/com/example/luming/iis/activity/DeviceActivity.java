@@ -53,7 +53,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private ListView lv_device;
     private String userId;
     private LoadingDialog loadingDialog;
-
+    private String selectedDeviceName;
     /**
      * 登录信息
      */
@@ -78,7 +78,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 case CONNECTION_SUCCESS:
                     loadingDialog.dissMiss();
                     TipDialogUtils.getInstance(DeviceActivity.this, ICON_TYPE_SUCCESS, "连接成功", handler);
-                    ManageActivity.ToManagActivity(DeviceActivity.this, (String) msg.obj);
+                    ManageActivity.ToManagActivity(DeviceActivity.this, (String) msg.obj, selectedDeviceName);
                     break;
             }
         }
@@ -225,7 +225,8 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         super.onDestroy();
     }
 
-    public void connection(final String host, final Integer port) {
+    public void connection(final Device device) {
+        selectedDeviceName = device.getName();
         loadingDialog = new LoadingDialog(this);
         loadingDialog.isShow();
         new Thread() {
@@ -234,7 +235,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 Message message = new Message();
                 try {
                     socket = MySocket.getInstance();
-                    SocketAddress socketAddress = new InetSocketAddress(host, port);
+                    SocketAddress socketAddress = new InetSocketAddress(device.getIp(), Integer.valueOf( device.getPort()));
                     socket.connect(socketAddress, 3000);
                     InputStream in = MySocket.getIn();
                     byte[] buffer = new byte[1024];

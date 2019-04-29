@@ -79,20 +79,6 @@ public class DatabaseOperator {
         addDeviceOperation(user_id,sql);
     }
 
-    public List<Device> queryAllDevice() {
-        ArrayList<Device> list = new ArrayList<Device>();
-        if (!db.isOpen()){
-            db = dbHelper.getWritableDatabase();
-        }
-        Cursor c = db.rawQuery("select name,ip,port from device where user_id = '-1'", null);
-        while (c.moveToNext()) {
-            Device device = new Device(c.getString(0), c.getString(1), c.getString(2));
-            list.add(device);
-        }
-        c.close();
-        return list;
-    }
-
     public List<Device> queryAllDevice(String user_id) {
         ArrayList<Device> list = new ArrayList<Device>();
         if (!db.isOpen()){
