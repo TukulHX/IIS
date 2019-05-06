@@ -14,7 +14,7 @@ import java.net.URLEncoder;
 
 public class WebService {
     //private static String IP = "192.168.43.253:8080"; //修改为你的服务器 IP 地址
-    private static String IP = "luuming.imwork.net:33136";
+    private static String IP = "154.8.217.225:8080";
     /**
      * 通过Get方式获取HTTP服务器数据
      *
