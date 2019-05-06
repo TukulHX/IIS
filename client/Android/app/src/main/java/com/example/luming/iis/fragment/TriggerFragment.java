@@ -41,7 +41,7 @@ import java.util.Map;
 public class TriggerFragment extends BaseFragment {
     private ListView listView;
     private List<String> list = new ArrayList<>();
-    private ArrayAdapter<String> adapter;
+    private BaseAdapter adapter;
     private GridView gv_item;
     private ArrayList<Map<String,Object>>  data = new ArrayList<>();
     private JSONObject config;
@@ -77,6 +77,8 @@ public class TriggerFragment extends BaseFragment {
                         bufferedOutputStream.flush();
                     }
                 }
+                getData();
+                adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (FileNotFoundException e) {
@@ -152,7 +154,7 @@ public class TriggerFragment extends BaseFragment {
                 }
                 gv_item =  getActivity().findViewById(R.id.trigger_gridview);
                 getData();
-                BaseAdapter adapter = new ImageAdapter(getContext(),data);
+                adapter = new ImageAdapter(getContext(),data);
                 gv_item.setAdapter(adapter);
             }
         });
@@ -197,6 +199,7 @@ public class TriggerFragment extends BaseFragment {
         }.start();
     }
     public void getData(){
+        data.clear();
         File dir = new File(getContext().getFilesDir() + "/" + device_name + "/" + moduleName);
         File[] files = dir.listFiles();
         for(int i = 0; files != null && i < files.length; i++){
