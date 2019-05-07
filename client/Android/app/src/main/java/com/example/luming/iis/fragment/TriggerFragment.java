@@ -1,8 +1,12 @@
 package com.example.luming.iis.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -39,9 +43,10 @@ import java.util.List;
 import java.util.Map;
 
 public class TriggerFragment extends BaseFragment {
-    private ListView listView;
+    private ListView lv_module;
     private List<String> list = new ArrayList<>();
-    private BaseAdapter adapter;
+    private BaseAdapter gv_adapter;
+    private BaseAdapter lv_adapter;
     private GridView gv_item;
     private ArrayList<Map<String,Object>>  data = new ArrayList<>();
     private JSONObject config;
@@ -49,7 +54,6 @@ public class TriggerFragment extends BaseFragment {
     private Button bt_refresh;
     private TextView tv_title;
     private String moduleName;
-    private DatabaseOperator databaseOperator;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
     private String device_name;
     private static final String JSON = "json";
@@ -78,7 +82,7 @@ public class TriggerFragment extends BaseFragment {
                     }
                 }
                 getData();
-                adapter.notifyDataSetChanged();
+                gv_adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (FileNotFoundException e) {
@@ -99,12 +103,18 @@ public class TriggerFragment extends BaseFragment {
     @Override
     protected void initEvent() {
         device_name = getActivity().getIntent().getExtras().getString(ManageActivity.DEVICE_NAME,"-1");
-        databaseOperator = DatabaseOperator.getInstance(getContext());
-        listView = getActivity().findViewById(R.id.trigger_list);
+        gv_adapter = new ImageAdapter(getContext(),data);
+        lv_adapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_list_item_1, list);
+        lv_module = getActivity().findViewById(R.id.trigger_list);
+        lv_module.setAdapter(lv_adapter);
         gv_item = getActivity().findViewById(R.id.trigger_gridview);
+        gv_item.setAdapter(gv_adapter);
         bt_start = getActivity().findViewById(R.id.trigger_start);
         bt_refresh = getActivity().findViewById(R.id.trigger_refresh);
         tv_title = getActivity().findViewById(R.id.trigger_title);
+
+        //TODO 优化所有 Fragment 的添加模块逻辑
         try {
             config = new JSONObject((String) getActivity().getIntent().getExtras().get(JSON));
             Iterator<?> it = config.keys();
@@ -122,10 +132,7 @@ public class TriggerFragment extends BaseFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        adapter = new ArrayAdapter<String>(
-                getActivity(), android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_module.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 moduleName = (String) adapterView.getItemAtPosition(i);
@@ -152,10 +159,16 @@ public class TriggerFragment extends BaseFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                gv_item =  getActivity().findViewById(R.id.trigger_gridview);
                 getData();
-                adapter = new ImageAdapter(getContext(),data);
-                gv_item.setAdapter(adapter);
+                gv_adapter.notifyDataSetChanged();
+            }
+        });
+        gv_item.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Map<String,Object> item = (Map<String, Object>) parent.getItemAtPosition(position);
+                    File file = new File( (String) item.get("url") );
+                    //TODO
             }
         });
     }
@@ -204,7 +217,7 @@ public class TriggerFragment extends BaseFragment {
         File[] files = dir.listFiles();
         for(int i = 0; files != null && i < files.length; i++){
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("url",files[i].getAbsoluteFile());
+            map.put("url",files[i].getPath());
             data.add(map);
         }
     }
