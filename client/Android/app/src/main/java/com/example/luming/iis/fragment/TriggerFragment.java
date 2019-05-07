@@ -62,7 +62,8 @@ public class TriggerFragment extends BaseFragment {
                 if( extraNum > 0 ){
                     for(Integer i = 0; i < extraNum; ++i){
                         String name = json.getString("name" + i.toString());
-                        String path = getContext().getFilesDir() + "/" + device_name + "/" + moduleName;
+                        //这里在目录下添加了/images/，主要是为了方便fileProvider获取路径方便。
+                        String path = getContext().getFilesDir() + "/images/" + device_name + "/" + moduleName;
                         File dir = new File(path);
                         if(!dir.exists())
                             dir.mkdirs();
@@ -208,7 +209,7 @@ public class TriggerFragment extends BaseFragment {
     public void getData(){
         data.clear();
         //TODO 文件名可能需要重新考虑统一，而不是动态.
-        File dir = new File(getContext().getFilesDir() + "/" + device_name + "/" + moduleName);
+        File dir = new File(getContext().getFilesDir() + "/images/" + device_name + "/" + moduleName);
         File[] files = dir.listFiles();
         for(int i = 0; files != null && i < files.length; i++){
             Map<String, Object> map = new HashMap<String, Object>();
