@@ -1,14 +1,16 @@
 package com.example.luming.iis.adapter;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
 import com.example.luming.iis.R;
 import com.example.luming.iis.utils.GetImageByUrl;
+import com.example.luming.iis.utils.OpenFileIntentUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,7 +23,7 @@ public class ImageAdapter extends BaseAdapter {
     // 接受上下文
     private Context context;
     // 声明内部类对象
-    private ViewHolder viewHolder;
+    private ViewHolder vh;
 
     /**
      * 构造函数
@@ -60,22 +62,30 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // 判断当前条目是否为null
         if (convertView == null) {
-            viewHolder = new ViewHolder();
+            vh = new ViewHolder();
             convertView = View.inflate(context, R.layout.data_grid_item, null);
-            viewHolder.iv_image = (ImageView) convertView
+            vh.iv_image = (ImageView) convertView
                     .findViewById(R.id.iv_grid_image);
-            convertView.setTag(viewHolder);
+            convertView.setTag(vh);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            vh = (ViewHolder) convertView.getTag();
         }
 
         // 获取List集合中的map对象
         Map<String, Object> map = data.get(position);
         // 获取图片的url路径
-        String url = map.get("url").toString();
+        final String url = map.get("url").toString();
         // 这里调用了图片加载工具类的setImage方法将图片直接显示到控件上
+        System.out.println("图片路径为：" + url);
         GetImageByUrl getImageByUrl = new GetImageByUrl();
-        getImageByUrl.setImage(viewHolder.iv_image, url);
+        getImageByUrl.setImage(vh.iv_image, url);
+        vh.iv_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(OpenFileIntentUtils.getImageFileIntent(context, url));
+                System.out.println("成功打开");
+            }
+        });
         return convertView;
     }
 

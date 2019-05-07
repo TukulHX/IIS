@@ -1,28 +1,22 @@
 package com.example.luming.iis.fragment;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Base64;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.activity.ManageActivity;
 import com.example.luming.iis.adapter.ImageAdapter;
 import com.example.luming.iis.base.BaseFragment;
-import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
 
@@ -213,6 +207,7 @@ public class TriggerFragment extends BaseFragment {
     }
     public void getData(){
         data.clear();
+        //TODO 文件名可能需要重新考虑统一，而不是动态.
         File dir = new File(getContext().getFilesDir() + "/" + device_name + "/" + moduleName);
         File[] files = dir.listFiles();
         for(int i = 0; files != null && i < files.length; i++){

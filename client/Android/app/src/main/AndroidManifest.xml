@@ -62,6 +62,17 @@
             android:name=".broadcast.NetWorkStateReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
+
+        <!--解决三方应用打开文件异常问题-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.luming.iis.fileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
