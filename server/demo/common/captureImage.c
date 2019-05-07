@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -20,7 +21,7 @@
 //////////////////////////////////////////////////
 struct tm nowtime;
 struct timeval tv;
-unsigned char time_now[128];
+unsigned char file_name[128];
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 struct buffer {
@@ -33,7 +34,6 @@ struct buffer * buffers = NULL;
 static unsigned int n_buffers = 0;
 FILE *file_fd;
 static unsigned long file_length;
-static unsigned char *file_name;
 //////////////////////////////////////////////////////
 //获取一帧数据
 //////////////////////////////////////////////////////
@@ -48,8 +48,6 @@ static int read_frame(void)
         int ff = ioctl(fd, VIDIOC_DQBUF, &buf);
         if (ff < 0)
                 printf("failture\n"); //出列采集的帧缓冲
-        assert(buf.index < n_buffers);
-        printf("buf.index dq is %d,\n", buf.index);
         fwrite(buffers[buf.index].start, buffers[buf.index].length, 1, file_fd); //将其写入文件中
         /*9.将缓冲重新入队列尾,这样可以循环采集。VIDIOC_QBUF*/
         ff = ioctl(fd, VIDIOC_QBUF, &buf); //再将其入列
@@ -62,7 +60,7 @@ int main(int argc, char ** argv)
 	//获取系统时间
 	gettimeofday(&tv, NULL);
 	localtime_r(&tv.tv_sec,&nowtime);
-	sprintf(time_now,"%d_%d_%d_%d_%d_%d.jpeg",
+	sprintf(file_name,"%d_%d_%d_%d_%d_%d.jpeg",
     	nowtime.tm_year+1900,
     	nowtime.tm_mon+1,
     	nowtime.tm_mday,
@@ -74,7 +72,7 @@ int main(int argc, char ** argv)
         struct v4l2_format fmt;
         unsigned int i;
         enum v4l2_buf_type type;
-        file_fd = fopen(time_now, "w");//图片文件名
+        file_fd = fopen(file_name, "w");//图片文件名
         /*1.打开设备文件。 int fd=open(”/dev/video0″,O_RDWR);*********/
         fd = open(dev_name, O_RDWR /* required */| O_NONBLOCK, 0);//打开设备
         /*2.取得设备的capability，看看设备具有什么功能，比如是否具有视频输入,或者音频输入输出等。VIDIOC_QUERYCAP,struct v4l2_capability*/
@@ -88,18 +86,12 @@ int main(int argc, char ** argv)
         fmt1.index = 0;
         fmt1.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         //获取当前驱动支持的视频格式
-        printf("we are here11\n");
         while ((ret = ioctl(fd, VIDIOC_ENUM_FMT, &fmt1)) == 0)
         {
                 fmt1.index++;
-                printf("{ pixelformat = '%c%c%c%c', description = '%s' }\n",
-                                fmt1.pixelformat & 0xFF, (fmt1.pixelformat >> 8) & 0xFF,
-                                (fmt1.pixelformat >> 16) & 0xFF,
-                                (fmt1.pixelformat >> 24) & 0xFF, fmt1.description);
         }
         //帧的格式，比如宽度，高度等
         CLEAR (fmt);
-        printf("we are here22\n");
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE; //数据流类型，必须永远是V4L2_BUF_TYPE_VIDEO_CAPTURE
         fmt.fmt.pix.width = 640;//宽，必须是16的倍数
         fmt.fmt.pix.height = 480;////高，必须是16的倍数
@@ -111,7 +103,6 @@ int main(int argc, char ** argv)
         if (ff < 0)
                 printf("failture VIDIOC_S_FMT\n");
         //计算图片大小
-        printf("we are here33\n");
         file_length = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
         /*4.向驱动申请帧缓冲，一般不超过5个。struct v4l2_requestbuffers*/
         struct v4l2_requestbuffers req;
@@ -126,7 +117,6 @@ int main(int argc, char ** argv)
         if (req.count < 1)
                 printf("Insufficient buffer memory\n");
         buffers = (struct buffer*) calloc(req.count, sizeof(*buffers));//内存中建立对应空间
-        printf("we are here44\n");
 
         /*5.将申请到的帧缓冲映射到用户空间，这样就可以直接操作采集到的帧了，而不必去复制。mmap*/
         for (n_buffers = 0; n_buffers < req.count; ++n_buffers)
@@ -146,7 +136,6 @@ int main(int argc, char ** argv)
                 if (MAP_FAILED == buffers[n_buffers].start)
                         printf("mmap failed\n");
         }
-        printf("we are here55\n");
         /*6.将申请到的帧缓冲全部入队列，以便存放采集到的数据.VIDIOC_QBUF,struct v4l2_buffer*/
         for (i = 0; i < n_buffers; ++i)
         {
@@ -199,6 +188,9 @@ int main(int argc, char ** argv)
         /*11.关闭视频设备。close(fd);*/
         close(fd);
         fclose(file_fd);
+	char pwd[80];
+	getcwd(pwd,sizeof(pwd));
+	printf("%s/%s",pwd,file_name);
         exit(EXIT_SUCCESS);
         return 0;
 }
