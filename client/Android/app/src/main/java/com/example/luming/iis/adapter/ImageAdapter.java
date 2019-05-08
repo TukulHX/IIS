@@ -85,8 +85,13 @@ public class ImageAdapter extends BaseAdapter {
         vh.iv_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(OpenFileIntentUtils.getImageFileIntent(context, url));
-                System.out.println("成功打开");
+                if (url.contains(".jpg") || url.contains(".png") || url.contains(".jpeg")) {
+                    context.startActivity(OpenFileIntentUtils.getImageFileIntent(context, url));
+                    System.out.println("成功打开图片");
+                } else if (url.contains(".txt")){
+                    context.startActivity(OpenFileIntentUtils.getTextFileIntent(context, url));
+                    System.out.println("成功打开文本");
+                }
             }
         });
         vh.tv_text.setText(text);
