@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.luming.iis.R;
 import com.example.luming.iis.utils.GetImageByUrl;
@@ -66,6 +67,7 @@ public class ImageAdapter extends BaseAdapter {
             convertView = View.inflate(context, R.layout.data_grid_item, null);
             vh.iv_image = (ImageView) convertView
                     .findViewById(R.id.iv_grid_image);
+            vh.tv_text = convertView.findViewById(R.id.tv_grid_text);
             convertView.setTag(vh);
         } else {
             vh = (ViewHolder) convertView.getTag();
@@ -75,6 +77,7 @@ public class ImageAdapter extends BaseAdapter {
         Map<String, Object> map = data.get(position);
         // 获取图片的url路径
         final String url = map.get("url").toString();
+        final String text = map.get("name").toString();
         // 这里调用了图片加载工具类的setImage方法将图片直接显示到控件上
         System.out.println("图片路径为：" + url);
         GetImageByUrl getImageByUrl = new GetImageByUrl();
@@ -86,6 +89,7 @@ public class ImageAdapter extends BaseAdapter {
                 System.out.println("成功打开");
             }
         });
+        vh.tv_text.setText(text);
         return convertView;
     }
 
@@ -98,6 +102,7 @@ public class ImageAdapter extends BaseAdapter {
     //TODO 添加文字的显示
     class ViewHolder {
         public ImageView iv_image;
+        public TextView tv_text;
     }
 
 }

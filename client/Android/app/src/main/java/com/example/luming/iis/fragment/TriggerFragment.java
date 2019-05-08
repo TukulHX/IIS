@@ -158,14 +158,6 @@ public class TriggerFragment extends BaseFragment {
                 gv_adapter.notifyDataSetChanged();
             }
         });
-        gv_item.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Map<String,Object> item = (Map<String, Object>) parent.getItemAtPosition(position);
-                    File file = new File( (String) item.get("url") );
-                    //TODO
-            }
-        });
     }
 
     private void send(final String json) {
@@ -214,6 +206,7 @@ public class TriggerFragment extends BaseFragment {
         for(int i = 0; files != null && i < files.length; i++){
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("url",files[i].getPath());
+            map.put("name",files[i].getName());
             data.add(map);
         }
     }
