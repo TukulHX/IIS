@@ -14,13 +14,15 @@ create table data
 (
 	id int(11) NOT NULL AUTO_INCREMENT,
 	user_id int(11),
-	device_id int(11),
+	device_name varchar(20),
 	module_name varchar(20),
 	send varchar(20),
 	value varchar(20),
 	time timestamp,
 	PRIMARY KEY(id)
-);
+)
+DEFAULT CHARSET=UTF8
+;
 
 create table device
 (
