@@ -17,6 +17,7 @@ import com.example.luming.iis.R;
 import com.example.luming.iis.activity.ManageActivity;
 import com.example.luming.iis.adapter.ImageAdapter;
 import com.example.luming.iis.base.BaseFragment;
+import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
 import com.example.luming.iis.utils.SharedPreferenceUtils;
 
@@ -50,6 +51,7 @@ public class TriggerFragment extends BaseFragment {
     private String moduleName;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
     private String device_name;
+    private DatabaseOperator databaseOperator;
     private static final String JSON = "json";
     private static final String START_CMD = "start";
     private static final String REFRESH_CMD = "fetch";
@@ -74,6 +76,7 @@ public class TriggerFragment extends BaseFragment {
                         byte[] buffer = Base64.decode(json.getString( "extra" + i.toString()),Base64.DEFAULT);
                         bufferedOutputStream.write(buffer);
                         bufferedOutputStream.flush();
+                        databaseOperator.addData(user_id,device_name,moduleName,REFRESH_CMD,name);
                     }
                 }
                 getData();
@@ -85,7 +88,6 @@ public class TriggerFragment extends BaseFragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //databaseOperator.addData(user_id,moduleName, send_cmd, rec_value);
         }
     };
 
@@ -97,7 +99,7 @@ public class TriggerFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
-        device_name = getActivity().getIntent().getExtras().getString(ManageActivity.DEVICE_NAME,"-1");
+        device_name = ManageActivity.getDeviceName();
         gv_adapter = new ImageAdapter(getContext(),data);
         lv_adapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_list_item_1, list);
@@ -108,7 +110,7 @@ public class TriggerFragment extends BaseFragment {
         bt_start = getActivity().findViewById(R.id.trigger_start);
         bt_refresh = getActivity().findViewById(R.id.trigger_refresh);
         tv_title = getActivity().findViewById(R.id.trigger_title);
-
+        databaseOperator = DatabaseOperator.getInstance(getContext());
         //TODO 优化所有 Fragment 的添加模块逻辑
         try {
             config = new JSONObject((String) getActivity().getIntent().getExtras().get(JSON));

@@ -29,6 +29,7 @@ public class ManageActivity extends BaseActivity {
     private ActionFragment actionFragment;
     private TriggerFragment triggerFragment;
     private ManageVPAdapter vpAdapter;
+    private static String device_name;
     public static final String JSON = "json";
     public static final String DEVICE_NAME = "device_name";
 
@@ -49,6 +50,7 @@ public class ManageActivity extends BaseActivity {
     }
     @Override
     protected void initView() {
+        device_name = this.getIntent().getExtras().getString(DEVICE_NAME,"-1");
         fragments = new ArrayList<>();
         tabSegment = findViewById(R.id.tabSegment);
         vp_content = findViewById(R.id.contentViewPager);
@@ -81,7 +83,9 @@ public class ManageActivity extends BaseActivity {
     protected void initEvent() {
 
     }
-
+    public static String getDeviceName(){
+        return device_name;
+    }
     /**
      * ViewPager监听方法
      */

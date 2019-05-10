@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.activity.ManageActivity;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
@@ -74,7 +75,7 @@ public class StatusFragment extends BaseFragment {
                         delayTime = 1;
                     else
                         delayTime = Integer.parseInt(tmpDealyTime);
-                    databaseOperator.addData(user_id,module_name, send_cmd, rec_value);
+                    databaseOperator.addData(user_id, ManageActivity.getDeviceName(),module_name, send_cmd, rec_value);
                     drawlineChart();
                     removeMessages(1);
                     if (!isDestroy)

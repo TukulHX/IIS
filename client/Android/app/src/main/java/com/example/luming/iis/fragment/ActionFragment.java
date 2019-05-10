@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.luming.iis.R;
+import com.example.luming.iis.activity.ManageActivity;
 import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.database.DatabaseOperator;
 import com.example.luming.iis.utils.MySocket;
@@ -41,7 +42,6 @@ public class ActionFragment extends BaseFragment {
     private DatabaseOperator databaseOperator;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
 
-
     private static final String JSON = "json";
     public static final String ACTION = "action";
     public static final String SETTER = "setter";
@@ -54,7 +54,7 @@ public class ActionFragment extends BaseFragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            databaseOperator.addData(user_id,moduleName, send_cmd, rec_value);
+            databaseOperator.addData(user_id, ManageActivity.getDeviceName(), moduleName,send_cmd, rec_value);
         }
     };
 

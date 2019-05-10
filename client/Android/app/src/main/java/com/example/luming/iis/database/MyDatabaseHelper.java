@@ -22,7 +22,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String sql = "create table device ( id integer primary key AUTOINCREMENT,user_id TEXT default '-1'," +
                 "name TEXT NOT NULL , ip TEXT NOT NULL ,port integer NOT NULL )";
         String sql2 = "create table data ( id integer primary key AUTOINCREMENT, user_id TEXT default '-1'," +
-                "module_name TEXT NOT NULL, send TEXT default null ,value TEXT,time TimeStamp DEFAULT(datetime('now', 'localtime') ))";
+                "device_name TEXT," +
+                "module_name TEXT NOT NULL, " +
+                "send TEXT default null ," +
+                "value TEXT," +
+                "time TimeStamp DEFAULT(datetime('now', 'localtime') ))";
         //增加操作表operation
         String sql3 = "create table operation ( id integer primary key AUTOINCREMENT,user_id TEXT default '-1', sql TEXT NOT NULL)";
         db.execSQL(sql);

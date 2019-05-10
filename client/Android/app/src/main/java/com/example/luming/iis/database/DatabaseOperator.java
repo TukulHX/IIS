@@ -112,7 +112,7 @@ public class DatabaseOperator {
     }
 
     public void addData(String user_id,String device_id, String name, String send, String value) {
-        db.execSQL("insert into data (user_id,device_id, module_name,send,value) values(?,?,?,?)", new Object[]{user_id,device_id, name, send, value});
+        db.execSQL("insert into data (user_id,device_name, module_name,send,value) values(?,?,?,?,?)", new Object[]{user_id,device_id, name, send, value});
     }
 
     public void addFromJsonArray(String jsonArrayStr,String table) {
