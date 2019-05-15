@@ -24,6 +24,8 @@ def trigger_thread(event, invoke, outpath):
 	invoke_stream = os.popen( invoke )	# return saved file path
 	file_path = invoke_stream.read()
 	localtime = time.strftime("%y_%m_%d_%H_%M_%S")
+	if not os.path.exists(outpath):
+		os.makedirs(outpath)
 	with open( outpath + localtime ,'w') as f:
 		f.write(file_path)
 
@@ -78,14 +80,15 @@ class MyServer(socketserver.BaseRequestHandler):
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
 					num = 0
-					for log in os.listdir(component['path']):
-						with open(component['path'] + log, 'r') as f:
-							file = f.read()
-							with open(file,'rb') as f2:
-								respons['extra'+ str(num)] = base64.b64encode(f2.read())
-							respons['name'+ str(num)] = file.split('/')[-1] ## get file name
-							num = num + 1
-						os.remove(component['path'] + log)
+					if os.path.exists(component['path']):
+						for log in os.listdir(component['path']):
+							with open(component['path'] + log, 'r') as f:
+								file = f.read()
+								with open(file,'rb') as f2:
+									respons['extra'+ str(num)] = base64.b64encode(f2.read())
+								respons['name'+ str(num)] = file.split('/')[-1] ## get file name
+								num = num + 1
+							os.remove(component['path'] + log)
 					respons['content'] = num
 				size = len(json.dumps(respons))
 				print("fetch size is", size)
