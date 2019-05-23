@@ -34,8 +34,6 @@ class MyServer(socketserver.BaseRequestHandler):
 	def handle(self):
 		print(self.request,self.client_address,self.server)
 		conn = self.request
-		with open('config.ini', 'w') as configfile:
-        		config.write(configfile)
 		if sys.platform == 'win32':
 			os.system('tools\ini2json.exe config.ini')
 		elif platform.uname()[4] == 'x86_64':
@@ -76,6 +74,9 @@ class MyServer(socketserver.BaseRequestHandler):
 
 			elif component['type'] == 'trigger':
 				if(data['value'] == 'start'):
+					if not component.has_key('path'):
+						component['path'] = './default_logs/'
+						config.set(data['name'],'path','./default_logs/') #update new config file
 					thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
@@ -84,6 +85,8 @@ class MyServer(socketserver.BaseRequestHandler):
 						for log in os.listdir(component['path']):
 							with open(component['path'] + log, 'r') as f:
 								file = f.read()
+								if not os.path.exists(file):
+									continue
 								with open(file,'rb') as f2:
 									respons['extra'+ str(num)] = base64.b64encode(f2.read())
 								respons['name'+ str(num)] = file.split('/')[-1] ## get file name
@@ -96,6 +99,8 @@ class MyServer(socketserver.BaseRequestHandler):
 			respons = json.dumps(respons)
 			conn.sendall(respons.encode())
 			print(respons,'sended')
+			with open('config.ini', 'w') as configfile:
+				config.write(configfile)
 
 if __name__ == '__main__':
 	if os.fork() > 0:
