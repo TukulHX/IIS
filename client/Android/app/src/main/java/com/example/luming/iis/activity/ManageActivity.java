@@ -67,7 +67,7 @@ public class ManageActivity extends BaseActivity {
         vp_content.addOnPageChangeListener(new MyOnPageChangeListener());
         tabSegment.addTab(new QMUITabSegment.Tab("控制"));
         tabSegment.addTab(new QMUITabSegment.Tab("检测"));
-        tabSegment.addTab(new QMUITabSegment.Tab("事件"));
+        tabSegment.addTab(new QMUITabSegment.Tab("触发"));
         tabSegment.setHasIndicator(true);//设置包含指示器
         tabSegment.setMode(QMUITabSegment.MODE_FIXED);//设置均分宽度
         tabSegment.setIndicatorWidthAdjustContent(false);//指示器宽度不随内容变化
