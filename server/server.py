@@ -17,17 +17,22 @@ else:
 from libs.helper import *
 config = None
 
-def trigger_thread(event, invoke, outpath):
+def trigger_thread(name, event, invoke, outpath):
 	print("start new thread", event, invoke, outpath)
-	event_stream = os.popen( event )	# start event
-	ret = event_stream.read()		# may be block
-	invoke_stream = os.popen( invoke )	# return saved file path
-	file_path = invoke_stream.read()
-	localtime = time.strftime("%y_%m_%d_%H_%M_%S")
-	if not os.path.exists(outpath):
-		os.makedirs(outpath)
-	with open( outpath + localtime ,'w') as f:
-		f.write(file_path)
+	while True:
+		event_stream = os.popen( event )	# start event
+		ret = event_stream.read()		# may be block
+		invoke_stream = os.popen( invoke )	# return saved file path
+		file_path = invoke_stream.read()
+		localtime = time.strftime("%y_%m_%d_%H_%M_%S")
+		if not os.path.exists(outpath):
+			os.makedirs(outpath)
+		with open( outpath + localtime ,'w') as f:
+			f.write(file_path)
+		if not config.has_option(name, "loop"):
+			break
+		if not config.getboolean(name,"loop"):
+			break
 
 class MyServer(socketserver.BaseRequestHandler):
 
@@ -77,7 +82,7 @@ class MyServer(socketserver.BaseRequestHandler):
 					if not component.has_key('path'):
 						component['path'] = './default_logs/'
 						config.set(data['name'],'path','./default_logs/') #update new config file
-					thread.start_new_thread(trigger_thread,(component['event'], component['invoke'], component['path']))
+					thread.start_new_thread(trigger_thread,(data['name'],component['event'], component['invoke'], component['path']))
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
 					num = 0
