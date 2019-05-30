@@ -58,12 +58,9 @@ class MyServer(socketserver.BaseRequestHandler):
 				print('Json Decode error')
 				break
 			print(data,'receive')
-			if sys.version_info.major is 3:
-				component = config[data['name']]
-			else: # for python2 convert item to dict
-				component = {}
-				for tupe in config.items(data['name']):
-					component[tupe[0]] = tupe[1]
+			component = {}
+			for tupe in config.items(data['name']):
+				component[tupe[0]] = tupe[1]
 			if component['type'] == 'action':
 				os.system(component['cmd'])
 				respons = {'content':'success'}
@@ -77,10 +74,10 @@ class MyServer(socketserver.BaseRequestHandler):
 
 			elif component['type'] == 'trigger':
 				if(data['value'] == 'start'):
-					if not component.has_key('path'):
+					if not 'path' in component:
 						component['path'] = './default_logs/'
 						config.set(data['name'],'path','./default_logs/') #update new config file
-					if not component.has_key('loop'):
+					if not 'loop' in component:
 						component['loop'] = 'false'
 						config.set(data['name'],'loop','false')
 					thread.start_new_thread(trigger_thread,(data['name'],component['event'], component['invoke'], component['path']))
