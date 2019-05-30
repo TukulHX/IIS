@@ -47,6 +47,7 @@ public class TriggerFragment extends BaseFragment {
     private JSONObject config;
     private Button bt_start;
     private Button bt_refresh;
+    private Button bt_loop;
     private TextView tv_title;
     private String moduleName;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
@@ -55,7 +56,7 @@ public class TriggerFragment extends BaseFragment {
     private static final String JSON = "json";
     private static final String START_CMD = "start";
     private static final String REFRESH_CMD = "fetch";
-
+    private static final String LOOP_CMD = "loop";
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             try {
@@ -109,6 +110,7 @@ public class TriggerFragment extends BaseFragment {
         gv_item.setAdapter(gv_adapter);
         bt_start = getActivity().findViewById(R.id.trigger_start);
         bt_refresh = getActivity().findViewById(R.id.trigger_refresh);
+        bt_loop = getActivity().findViewById(R.id.trigger_loop);
         tv_title = getActivity().findViewById(R.id.trigger_title);
         databaseOperator = DatabaseOperator.getInstance(getContext());
         //TODO 优化所有 Fragment 的添加模块逻辑
@@ -134,8 +136,10 @@ public class TriggerFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 moduleName = (String) adapterView.getItemAtPosition(i);
                 try {
-                    JSONObject setting = new JSONObject( config.getString( moduleName));
+                    final JSONObject setting = new JSONObject( config.getString( moduleName));
                     tv_title.setText(moduleName);
+                    if(setting.has("loop"))
+                        bt_loop.setText("循环：" + setting.getBoolean("loop"));
                     bt_start.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -150,6 +154,22 @@ public class TriggerFragment extends BaseFragment {
                         public void onClick(View view) {
                             String cmd = ("{\"name\":\"" + moduleName + "\",\"value\":\"" + REFRESH_CMD + "\"}");
                             send(cmd);
+                            receive();
+                        }
+                    });
+                    bt_loop.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String cmd = ("{\"name\":\"" + moduleName + "\",\"value\":\"" + LOOP_CMD + "\"}");
+                            send(cmd);
+                            try {
+                                Boolean current = setting.getBoolean("loop");
+                                bt_loop.setText("循环：" + !current);//update tmp confing
+                                setting.put("loop",!current);
+                                config.put(moduleName,setting);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             receive();
                         }
                     });
