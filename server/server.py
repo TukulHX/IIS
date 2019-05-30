@@ -29,8 +29,6 @@ def trigger_thread(name, event, invoke, outpath):
 			os.makedirs(outpath)
 		with open( outpath + localtime ,'w') as f:
 			f.write(file_path)
-		if not config.has_option(name, "loop"):
-			break
 		if not config.getboolean(name,"loop"):
 			break
 
@@ -82,6 +80,9 @@ class MyServer(socketserver.BaseRequestHandler):
 					if not component.has_key('path'):
 						component['path'] = './default_logs/'
 						config.set(data['name'],'path','./default_logs/') #update new config file
+					if not component.has_key('loop'):
+						component['loop'] = 'false'
+						config.set(data['name'],'loop','false')
 					thread.start_new_thread(trigger_thread,(data['name'],component['event'], component['invoke'], component['path']))
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
