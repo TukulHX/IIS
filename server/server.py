@@ -78,8 +78,8 @@ class MyServer(socketserver.BaseRequestHandler):
 						component['path'] = './default_logs/'
 						config.set(data['name'],'path','./default_logs/') #update new config file
 					if not 'loop' in component:
-						component['loop'] = 'false'
-						config.set(data['name'],'loop','false')
+						component['loop'] = 'False'
+						config.set(data['name'],'loop','False')
 					thread.start_new_thread(trigger_thread,(data['name'],component['event'], component['invoke'], component['path']))
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
@@ -96,6 +96,10 @@ class MyServer(socketserver.BaseRequestHandler):
 								num = num + 1
 							os.remove(component['path'] + log)
 					respons['content'] = num
+				elif data['value'] == 'loop':
+					before = config.getboolean(data['name'],'loop')
+					print('before',before)
+					config.set(data['name'],'loop',str(not before))
 				size = len(json.dumps(respons))
 				print("fetch size is", size)
 				conn.sendall(struct.pack('>I',size))
