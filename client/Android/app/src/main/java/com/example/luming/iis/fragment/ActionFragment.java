@@ -31,9 +31,7 @@ import java.util.List;
  */
 public class ActionFragment extends BaseFragment {
     private ListView listView;
-    private List<String> list = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private JSONObject config;
     private Button button;
     private EditText editText;
     private String moduleName;
@@ -71,23 +69,6 @@ public class ActionFragment extends BaseFragment {
     protected void initEvent() {
         databaseOperator = DatabaseOperator.getInstance(getContext());
         listView = getActivity().findViewById(R.id.action_list);
-        try {
-            config = new JSONObject((String) getActivity().getIntent().getExtras().get(JSON));
-            Iterator<?> it = config.keys();
-            String key = "";
-            while (it.hasNext()) {//遍历JSONObject
-                key = (String) it.next().toString();
-                if (null != key && !"".equals(key)) {
-                    JSONObject setting = new JSONObject(config.getString(key));
-                    String type = setting.getString("type");
-                    if (type.equals("action") || type.equals("setter")) {
-                        list.add(key);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         adapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
@@ -108,7 +89,7 @@ public class ActionFragment extends BaseFragment {
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    String str = new String("{\"name\":\"" + moduleName + "\"}");
+                                    String str = "{\"name\":\"" + moduleName + "\"}";
                                     Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
                                     send(str);
                                     receive();

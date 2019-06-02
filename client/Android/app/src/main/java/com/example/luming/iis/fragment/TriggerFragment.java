@@ -39,12 +39,10 @@ import java.util.Map;
 
 public class TriggerFragment extends BaseFragment {
     private ListView lv_module;
-    private List<String> list = new ArrayList<>();
     private BaseAdapter gv_adapter;
     private BaseAdapter lv_adapter;
     private GridView gv_item;
     private ArrayList<Map<String,Object>>  data = new ArrayList<>();
-    private JSONObject config;
     private Button bt_start;
     private Button bt_refresh;
     private Button bt_loop;
@@ -53,7 +51,6 @@ public class TriggerFragment extends BaseFragment {
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
     private String device_name;
     private DatabaseOperator databaseOperator;
-    private static final String JSON = "json";
     private static final String START_CMD = "start";
     private static final String REFRESH_CMD = "fetch";
     private static final String LOOP_CMD = "loop";
@@ -113,24 +110,6 @@ public class TriggerFragment extends BaseFragment {
         bt_loop = getActivity().findViewById(R.id.trigger_loop);
         tv_title = getActivity().findViewById(R.id.trigger_title);
         databaseOperator = DatabaseOperator.getInstance(getContext());
-        //TODO 优化所有 Fragment 的添加模块逻辑
-        try {
-            config = new JSONObject((String) getActivity().getIntent().getExtras().get(JSON));
-            Iterator<?> it = config.keys();
-            String key = "";
-            while (it.hasNext()) {//遍历JSONObject
-                key = (String) it.next().toString();
-                if (null != key && !"".equals(key)) {
-                    JSONObject setting = new JSONObject(config.getString(key));
-                    String type = setting.getString("type");
-                    if (type.equals("trigger")) {
-                        list.add(key);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         lv_module.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

@@ -10,13 +10,18 @@ import android.widget.TextView;
 import com.example.luming.iis.R;
 import com.example.luming.iis.adapter.ManageVPAdapter;
 import com.example.luming.iis.base.BaseActivity;
+import com.example.luming.iis.base.BaseFragment;
 import com.example.luming.iis.fragment.ActionFragment;
 import com.example.luming.iis.fragment.StatusFragment;
 import com.example.luming.iis.fragment.TriggerFragment;
 import com.example.luming.iis.utils.MySocket;
 import com.qmuiteam.qmui.widget.QMUITabSegment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ManageActivity extends BaseActivity {
@@ -24,11 +29,12 @@ public class ManageActivity extends BaseActivity {
     private QMUITabSegment tabSegment;
     private ViewPager vp_content;
     private TextView tv_title;
-    private List<Fragment> fragments;
+    private List<BaseFragment> fragments;
     private StatusFragment statusFragment;
     private ActionFragment actionFragment;
     private TriggerFragment triggerFragment;
     private ManageVPAdapter vpAdapter;
+    private String strConfig;
     private static String device_name;
     public static final String JSON = "json";
     public static final String DEVICE_NAME = "device_name";
@@ -48,19 +54,50 @@ public class ManageActivity extends BaseActivity {
     protected void setTitle() {
         tv_title.setText("Manage");
     }
+
+    void initFragment(){
+        actionFragment = new ActionFragment();
+        statusFragment = new StatusFragment();
+        triggerFragment = new TriggerFragment();
+        try{
+            JSONObject config = new JSONObject(strConfig);
+            Iterator<?> it = config.keys();
+            String key = "";
+            while (it.hasNext()) {//遍历JSONObject
+                key = (String) it.next().toString();
+                if (null != key && !"".equals(key)) {
+                    JSONObject setting = new JSONObject(config.getString(key));
+                    String type = setting.getString("type");
+                    if (type.equals("action") || type.equals("setter")) {
+                        actionFragment.addKey(key);
+                    }
+                    else if (type.equals("status")) {
+                         statusFragment.addKey(key);
+                    }
+                    else if (type.equals("trigger")) {
+                        triggerFragment.addKey(key);
+                    }
+                }
+            }
+            fragments.add(actionFragment);
+            fragments.add(statusFragment);
+            fragments.add(triggerFragment);
+            for (BaseFragment f:fragments){
+                f.setConfig(config);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     protected void initView() {
         device_name = this.getIntent().getExtras().getString(DEVICE_NAME,"-1");
+        strConfig = getIntent().getStringExtra(JSON);
         fragments = new ArrayList<>();
         tabSegment = findViewById(R.id.tabSegment);
         vp_content = findViewById(R.id.contentViewPager);
         tv_title = findViewById(R.id.tv_title);
-        actionFragment = new ActionFragment();
-        statusFragment = new StatusFragment();
-        triggerFragment = new TriggerFragment();
-        fragments.add(actionFragment);
-        fragments.add(statusFragment);
-        fragments.add(triggerFragment);
+        initFragment();
         vpAdapter = new ManageVPAdapter(getSupportFragmentManager(), fragments);
         vp_content.setAdapter(vpAdapter);
         vp_content.setOffscreenPageLimit(3);

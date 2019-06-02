@@ -36,9 +36,7 @@ import java.util.List;
  */
 public class StatusFragment extends BaseFragment {
     private ListView listView;
-    private List<String> list = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private JSONObject config;
     private Boolean isDestroy;
     private String module_name;
     private String send_cmd = "NULL";      //暂时没用
@@ -50,8 +48,6 @@ public class StatusFragment extends BaseFragment {
     private EditText et_delayTime;
     private Integer delayTime = 1;
     private String user_id = SharedPreferenceUtils.getString(getContext(),"LoginInfo","-1");
-    private static final String JSON = "json";
-
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -100,24 +96,6 @@ public class StatusFragment extends BaseFragment {
         et_dataNum = getActivity().findViewById(R.id.numData);
         et_delayTime = getActivity().findViewById(R.id.delayTime);
         listView = getActivity().findViewById(R.id.status_list);
-
-        try {
-            config = new JSONObject((String) getActivity().getIntent().getExtras().get(JSON));
-            Iterator<?> it = config.keys();
-            String key = "";
-            while (it.hasNext()) {//遍历JSONObject
-                key = it.next().toString();
-                if (null != key && !"".equals(key)) {
-                    JSONObject setting = new JSONObject(config.getString(key));
-                    String type = setting.getString("type");
-                    if (type.equals("status")) {
-                        list.add(key);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         adapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
