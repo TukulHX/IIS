@@ -3,7 +3,6 @@ package com.example.luming.iis.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
@@ -64,7 +63,7 @@ public class ManageActivity extends BaseActivity {
             Iterator<?> it = config.keys();
             String key = "";
             while (it.hasNext()) {//遍历JSONObject
-                key = (String) it.next().toString();
+                key = it.next().toString();
                 if (null != key && !"".equals(key)) {
                     JSONObject setting = new JSONObject(config.getString(key));
                     String type = setting.getString("type");

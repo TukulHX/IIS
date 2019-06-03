@@ -253,7 +253,7 @@ public class SplashActivity extends FragmentActivity implements View.OnClickList
     }
 
     private void exit() {
-        if (isExit == false) {
+        if (!isExit) {
             isExit = true;
             Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
             Timer timer = new Timer();

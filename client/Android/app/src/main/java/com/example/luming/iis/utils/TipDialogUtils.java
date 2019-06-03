@@ -14,8 +14,7 @@ public class TipDialogUtils {
     public static QMUITipDialog dialog;
 
     public static void getInstance(Context context, int iconType, String desc, Handler handler) {
-        QMUITipDialog tipDialog = new QMUITipDialog.Builder(context).setIconType(iconType).setTipWord(desc).create();
-        dialog = tipDialog;
+        dialog = new QMUITipDialog.Builder(context).setIconType(iconType).setTipWord(desc).create();
         dialog.show();
         if (handler != null){
             handlerDismiss(handler, 1500);
@@ -23,8 +22,7 @@ public class TipDialogUtils {
     }
 
     public static void getInstance(Context context, int iconType, String desc) {
-        QMUITipDialog tipDialog = new QMUITipDialog.Builder(context).setIconType(iconType).setTipWord(desc).create();
-        dialog = tipDialog;
+        dialog = new QMUITipDialog.Builder(context).setIconType(iconType).setTipWord(desc).create();
         dialog.show();
     }
 

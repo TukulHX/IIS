@@ -1,9 +1,6 @@
 package com.example.luming.iis.utils;
 
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

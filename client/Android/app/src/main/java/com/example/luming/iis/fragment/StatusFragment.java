@@ -28,7 +28,6 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -89,7 +88,7 @@ public class StatusFragment extends BaseFragment {
 
     @Override
     protected void initEvent() {
-        lineChart = (LineChart) getActivity().findViewById(R.id.lineChart);
+        lineChart = getActivity().findViewById(R.id.lineChart);
         isDestroy = false;
         databaseOperator = DatabaseOperator.getInstance(getContext());
 
@@ -153,11 +152,7 @@ public class StatusFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            isDestroy = false;
-        } else {
-            isDestroy = true;
-        }
+        isDestroy = !isVisibleToUser;
     }
 
     private void drawlineChart() {

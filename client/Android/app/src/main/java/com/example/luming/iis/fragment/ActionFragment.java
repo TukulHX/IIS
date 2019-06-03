@@ -22,16 +22,11 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * TODO 稍后重构
  */
 public class ActionFragment extends BaseFragment {
-    private ListView listView;
-    private ArrayAdapter<String> adapter;
     private Button button;
     private EditText editText;
     private String moduleName;
@@ -68,8 +63,8 @@ public class ActionFragment extends BaseFragment {
     @Override
     protected void initEvent() {
         databaseOperator = DatabaseOperator.getInstance(getContext());
-        listView = getActivity().findViewById(R.id.action_list);
-        adapter = new ArrayAdapter<String>(
+        ListView listView = getActivity().findViewById(R.id.action_list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,8 +141,7 @@ public class ActionFragment extends BaseFragment {
                     byte[] buffer = new byte[1024];
                     InputStream is = MySocket.getIn();
                     is.read(buffer);
-                    JSONObject jsonObject = new JSONObject(new String(buffer));
-                    message.obj = jsonObject;
+                    message.obj = new JSONObject(new String(buffer));
                     handler.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();

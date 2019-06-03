@@ -101,10 +101,7 @@ public class DatabaseOperator {
      */
     public boolean isExistDevice(String name){
         Cursor cr = db.query("device", new String[]{"name", "ip", "port"}, "name = ?", new String[]{name}, null, null, null);
-        if (cr.getCount() != 0){
-            return true;
-        }
-        return false;
+        return cr.getCount() != 0;
     }
 
     public void addData(String user_id, String name, String send, String value) {
@@ -120,17 +117,17 @@ public class DatabaseOperator {
             JSONArray jsonArray = new JSONArray(jsonArrayStr);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String item = "";
-                String value = "";
+                StringBuilder item = new StringBuilder();
+                StringBuilder value = new StringBuilder();
                 Iterator it = jsonObject.keys();
                 while (it.hasNext()) {
                     String key = it.next().toString();
                     if (null != key) {
-                        item += key;
-                        value += "\'" + jsonObject.getString(key) + "\'";
+                        item.append(key);
+                        value.append("\'").append(jsonObject.getString(key)).append("\'");
                         if (it.hasNext()) {
-                            item += ",";
-                            value += ",";
+                            item.append(",");
+                            value.append(",");
                         }
                     }
                 }
@@ -154,7 +151,7 @@ public class DatabaseOperator {
 
     public String queryRecentTime(String user_id) {
         Cursor c = db.rawQuery("select time from data where user_id = " + user_id +" order by time desc limit 1 ", null);
-        while (c.moveToNext()) {
+        if ( c.moveToNext() ) {
             return c.getString(0);
         }
         return "SP_NULL";
@@ -191,7 +188,6 @@ public class DatabaseOperator {
 
     public static String getDeviceOperation(String user_id){
         Cursor cr = db.rawQuery("select sql from operation  where user_id = "+ user_id+ " limit 1",null);
-        System.out.print("cr.getCount() = " + String.valueOf(cr.getCount()) );
         if (cr.getCount() != 0){
             cr.moveToNext();
             return cr.getString(0);

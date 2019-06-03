@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class TriggerFragment extends BaseFragment {
@@ -190,8 +188,7 @@ public class TriggerFragment extends BaseFragment {
                     while (len < size){
                         len += input.read(buffer,len,size-len);
                     }
-                    JSONObject jsonObject = new JSONObject(new String(buffer));
-                    message.obj = jsonObject;
+                    message.obj = new JSONObject(new String(buffer));
                     handler.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -65,7 +65,7 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             vh = new ViewHolder();
             convertView = View.inflate(context, R.layout.data_grid_item, null);
-            vh.iv_image = (ImageView) convertView
+            vh.iv_image = convertView
                     .findViewById(R.id.iv_grid_image);
             vh.tv_text = convertView.findViewById(R.id.tv_grid_text);
             convertView.setTag(vh);

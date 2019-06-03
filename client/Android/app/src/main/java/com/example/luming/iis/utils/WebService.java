@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class WebService {
     //private static String IP = "192.168.43.253:8080"; //修改为你的服务器 IP 地址
@@ -123,7 +124,7 @@ public class WebService {
     private static String parseInfo(InputStream inStream) throws Exception {
         byte[] data = read(inStream);
         // 转化为字符串
-        return new String(data, "UTF-8");
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     // 将输入流转化为byte型
