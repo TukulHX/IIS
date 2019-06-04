@@ -73,13 +73,13 @@ class MyServer(socketserver.BaseRequestHandler):
 				respons = {'content':'success'}
 
 			elif component['type'] == 'trigger':
+				if not 'path' in component:
+					component['path'] = './default_logs/'
+					config.set(data['name'],'path','./default_logs/') #update new config file
+				if not 'loop' in component:
+					component['loop'] = 'False'
+					config.set(data['name'],'loop','False')
 				if(data['value'] == 'start'):
-					if not 'path' in component:
-						component['path'] = './default_logs/'
-						config.set(data['name'],'path','./default_logs/') #update new config file
-					if not 'loop' in component:
-						component['loop'] = 'False'
-						config.set(data['name'],'loop','False')
 					thread.start_new_thread(trigger_thread,(data['name'],component['event'], component['invoke'], component['path']))
 					respons = {'content':'success'}
 				elif data['value'] == 'fetch':
