@@ -99,8 +99,8 @@ public class DatabaseOperator {
      * @param name
      * @return
      */
-    public boolean isExistDevice(String name){
-        Cursor cr = db.query("device", new String[]{"name", "ip", "port"}, "name = ?", new String[]{name}, null, null, null);
+    public boolean isExistDevice(String name, String user_id){
+        Cursor cr = db.query("device", new String[]{"name", "ip", "port"}, "name = ? and user_id = ?", new String[]{name, user_id}, null, null, null);
         return cr.getCount() != 0;
     }
 

@@ -169,7 +169,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 AddDeviceDialog.newInstance(this).setOnAddDeviceListener(new AddDeviceDialog.OnAddDeviceListener() {
                     @Override
                     public void getDevice(String name, String ip, String port) {
-                        if (dbOperator.isExistDevice(name)) {
+                        if (dbOperator.isExistDevice(name, userId)) {
                             Toast.makeText(DeviceActivity.this, "该设备已存在，请勿重复添加", Toast.LENGTH_SHORT).show();
                             return;
                         }
